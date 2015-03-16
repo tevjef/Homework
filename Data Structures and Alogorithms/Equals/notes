@@ -1,0 +1,27 @@
+equals() 
+public boolean equls (object obj) 
+
+	obj is null 
+	obj is not in subclass (instance of)
+
+
+a.equals(b) = a.hashcode()== b.hashcode()
+
+if(a.hashcode() != b.hashcode())
+	then a is not equal to b.
+
+
+	|constant--------------hashcode------------perfect, very discriminating|
+equals expensive.
+hashcode cheap
+
+
+Into1
+	add equal method. 
+
+Info2
+	hascode
+
+Info3
+
+	lower case
