@@ -1,12 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <string.h>
 #include <queue>
 #include <set>
-
 #include <algorithm>
 #include <list>
+#include "token.h"
 
 using namespace std;
 
@@ -28,27 +26,7 @@ const string SPACE = "space";
 const string PUNCT = "punct";
 const string POSSIBLE_PARAMETERS[] = {LETTER, VOWEL, CONSONANT, WORD, NUMBER, SPACE, PUNCT};
 
-class Token {
-private:
-    string optional;
-    string parameter;
-public:
-    bool has_optional() { return !optional.empty(); }
-    string get_optional() const { return optional; };
-    string get_parameter() const { return parameter; };
-    Token(string _optional, string _parameter) {
-        optional = _optional;
-        parameter = _parameter;
-    };
-    Token() { };
-    virtual ostream &to_string(std::ostream &strm) const { return strm << "Token(" << optional << " " << parameter << ")"; }};
-
-std::ostream &operator<<(std::ostream &strm, const Token &token) {
-    return token.to_string(strm);
-}
-
 vector<Token> tokenList;
-
 
 bool is_vowel(char ascii) {
     ascii = (char) tolower(ascii);
