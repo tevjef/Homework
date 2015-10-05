@@ -33,6 +33,6 @@ enum Token {
 extern Token getToken(istream *br, string& lexeme);
 extern bool pushbackToken(Token t, string lexeme);
 
-extern int linenum = 0;
+extern int linenum;
 
 #endif
