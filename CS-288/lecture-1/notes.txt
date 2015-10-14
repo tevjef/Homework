@@ -1,0 +1,77 @@
+# qwerty.sh 
+function quit {
+echo new $1 # is scapoed to the function and represents the function args
+exit
+}
+echo original $1
+quit $1
+echo we do not get here
+-------------------
+
+./qwerty 777
+original 777
+new 777
+
+#Arrays!
+
+:> letter=(a b c d e f g h i) #define an array 
+:> echo ${letter[*]}  # * means all elements
+a b c d e f g h i
+:> echo ${letter[3]}
+d
+:> letter[1]=B # direct assign values
+:> echo ${letter[*]}
+a B c d e f g h i
+:> letter[1]=123 # assign other types. It itself does no type checking
+:> echo ${letter[*]} 
+a 123 c d e f g h i
+
+:> x=1
+:> while [ $x -lt 3] #-lt means less than
+> do 
+> let x =x+1
+> echo $x
+> done
+2
+3
+
+:> if i in a b c d e 
+> do 
+> echo $1
+> done
+a
+b
+c
+d
+e
+:>x=5
+:>y=6
+:> excho $x $y
+:> if {$x -gt $y ]
+> then 
+> echo x is bigger
+> fi
+
+:> if {$x -gt $y ]
+> then 
+> exho x is bigger
+> else 
+> echo y is bigger
+> fi
+y is bigger\
+:> x=123
+:> echo $x > /tmp/count
+:> cat /tmp/count
+123
+:> y=`cat /tmp/count`
+:> echo $y 
+123
+
+:> cat /tmp/count 2> /tmp/error # 2> mean tderr
+:> ls | wc # | redirects stdout to the stdin of the other. wc is Word count. | creates a subshell
+:> cut # takes a vertical slice
+:> grep # takes a horizontal slice
+:> read x # takes from stdin and store it in a variable
+:> ls | read x # does no read into 'ls' shell's x variable, but the subshell created by '|'
+:> echo -n qwerty # adds a new line
+

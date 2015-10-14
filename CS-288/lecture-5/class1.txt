@@ -1,0 +1,7 @@
+Students;test1;test2
+Cifer, Louis; 66;60
+Doe, John;100;90
+Jane, Marisa;100;95
+Emlin, G. R; 75;80
+Roe, Richard; 92;85
+Spade, Sam; 78;60

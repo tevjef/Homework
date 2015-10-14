@@ -1,0 +1,19 @@
+#! /bin/bash
+avg_size=0
+function average {
+	dir=( `ls $1` )
+	count=${#dir[*]}
+	size=( `ls -l -S $1 | awk '{ print $5 }'` )
+	for i in ${size[*]}; do
+		total=$((total + $i))
+	done
+	avg_size=$((total / count))
+	return
+}
+
+function main {
+	average $1
+	echo $avg_size
+	exit
+}
+main $1

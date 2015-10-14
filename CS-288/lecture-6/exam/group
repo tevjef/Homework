@@ -1,0 +1,13 @@
+name=0
+read -e -p "Enter a group name: " g_name
+name=`cat /etc/group | grep $g_name`
+count=`cat /etc/group | grep $g_name | wc -l`
+
+if [[ $count -eq 0 ]]
+	then
+		echo "Group $g_name does not exist"
+		exit
+fi
+read -e -p "Add new user to group: " u_name
+newname="$name,$u_name"
+echo $newname
