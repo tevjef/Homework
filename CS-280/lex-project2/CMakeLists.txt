@@ -3,8 +3,6 @@ project(lex)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES
-        lex.cpp
-    p2lex.h Tokenizer.cpp)
+set(SOURCE_FILES lex.cpp p2lex.h tokenizer.cpp)
 
 add_executable(lex ${SOURCE_FILES})
