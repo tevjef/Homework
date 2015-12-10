@@ -1,6 +1,6 @@
 #include "p2lex.h"
 #include <vector>
-
+#include <string.h>
 int linenum = 1;
 int currentPosition = 0;
 string currentLine = "";
@@ -72,7 +72,7 @@ Token getToken(istream *br, string &lexeme) {
         if (c == '+') return UNION;
         if (c == '^') return INTERSECT;
 
-        if (isalpha(c)) { // At this point, it's safe to say that the current char in the line is either a keyword or an
+        if (isalpha(c) || ispunct(c)) { // At this point, it's safe to say that the current char in the line is either a keyword or an
             inID = true;  // identifier
             lexeme = charbuf;
             if (charbuf == "for") return FOR;
