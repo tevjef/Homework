@@ -18,42 +18,25 @@ public class Decoder{
 
     //**** Implement this method
     // decode(n) decodes a single integer n
-    int lastIndex;
 
+    int lastindex = 257;
     public void decode(int n){
-        lastIndex = table.size() - 1;
-        print("decode\t" + n + "->" + Arrays.toString(table.get(n).toArray()));
-        if (n == 256 || n == 257) return;
+        if (debug) print("decode\t" + n + "->" + Arrays.toString(table.get(n).toArray()));
+        if (n == CLEAR_TABLE || n == END_OF_DATA) return;
 
-        Sequence seq;
-
-        if (n < table.size()) {
-             seq = table.get(n);
-
-            if (table.size() != 258) {
-                table.get(lastIndex).push(seq.firstElement());
-                print("append\t" + lastIndex + "->" + table.get(lastIndex).toString());
-            }
-
-            print("emit\t" + n + "->" + table.get(n));
-
-            table.add(seq.copy());
-            print("add\t\t" + (table.size() - 1) + "->" + table.get(table.size() -1).toString());
-            s = seq.copy();
-
-        } /*else {
-            seq = s.copy();
-            seq.push(seq.firstElement());
-            System.out.println(n + "->" + java.util.Arrays.toString(seq.toArray()));
-            table.add(seq);
-        }*/
-
-
+        if (table.size() > 258) {
+            table.get(table.size()-1).push(table.get(n).firstElement());
+            if (debug) print("append\t" + lastindex + "->" + table.get(table.size()-1));
+        }
+        if (debug) print("emit\t" + n + "->" + table.get(n));
+        s.addAll(table.get(n));
+        if (debug) print("add\t\t" + table.size() + "->" +table.get(n).copy());
+        table.add(table.get(n).copy());
+        lastindex++;
     }
 
-    int line = 1;
     void print(String str) {
-        System.out.println(line++ + ":\t" + str);
+        System.out.println(str);
     }
     // wrapper method to marshall input:
     // calls decode(n) on each integer n in input
@@ -67,7 +50,7 @@ public class Decoder{
     	}
 
     	if(!debug) {
-            System.out.println();
+            System.out.println(s.toString());
         }
     }
 }
