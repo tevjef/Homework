@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.Stack;
 
 public class Sequence extends Stack<Integer>{
@@ -17,6 +18,11 @@ public class Sequence extends Stack<Integer>{
 
     @Override
     public synchronized String toString() {
-        return super.toString();
+        StringBuilder sb = new StringBuilder(this.size());
+        for (int i : this) {
+            sb.append(i);
+            sb.append(" ");
+        }
+        return sb.toString().trim();
     }
 }
