@@ -6,7 +6,6 @@ public class DecoderMain{
 		boolean debugFlag = false;
 		boolean writeToFileFlag = false;
 		int argsNum = 0;
-
 		for (String arg : args) {
 			if (arg.equals("-d")){
 				argsNum++;

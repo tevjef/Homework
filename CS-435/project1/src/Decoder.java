@@ -13,7 +13,7 @@ public class Decoder{
     Sequence s;
     Scanner scanner;
     boolean debug=false;
-    private String debugOutput;
+    private StringBuilder debugOutput = new StringBuilder();
     private boolean writeToFile;
 
     // constructor
@@ -42,8 +42,8 @@ public class Decoder{
     }
 
     void print(String str) {
-        debugOutput+=str;
-        debugOutput+="\n";
+        debugOutput.append(str);
+        debugOutput.append("\n");
     }
     // wrapper method to marshall input:
     // calls decode(n) on each integer n in input
@@ -57,7 +57,7 @@ public class Decoder{
     	}
 
         String fileName = debug? "decoder.output.debug": "decoder.output";
-        String fileContents = debug? debugOutput:s.toString();
+        String fileContents = debug? debugOutput.toString():s.toString();
 
         if (writeToFile) {
             try {
