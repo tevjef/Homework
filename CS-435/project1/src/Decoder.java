@@ -60,8 +60,11 @@ public class Decoder{
         String fileContents = debug? debugOutput:s.toString();
 
         if (writeToFile) {
-            try(PrintWriter out = new PrintWriter(fileName)){
+            try {
+                PrintWriter out = new PrintWriter(fileName);
                 out.println(fileContents);
+                out.flush();
+                out.close();
                 System.out.print("Wrote file: "+fileName);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
