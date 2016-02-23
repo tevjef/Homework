@@ -10,11 +10,11 @@ public class Main {
         Person peter = new Person("peter");
         Person john =new Person("john");
 
-        mary.addParent(bob);
-        mary.addParent(jane);
-        peter.addParent(mary);
-        peter.addParent(paul);
-        john.addParent(peter);
+        mary.addParent(bob);   // Mary has parent Bob
+        mary.addParent(jane);  // Mary has parent Jane
+        peter.addParent(mary); // Peter has parent Mary
+        peter.addParent(paul); // Peter has parent Paul
+        john.addParent(peter); // John has parent Peter
 
         System.out.print("bob   jane\n" +
                 "|   /\n" +
@@ -24,6 +24,7 @@ public class Main {
                 "|\n" +
                 "john\n\n");
 
+        // Tests to check that relationships were created as expected.
         System.out.println("Is peter descendant of bob? " + bob.isDescendant(peter));
         System.out.println("Is bob descendant of peter? " + peter.isDescendant(bob));
         System.out.println("Is bob ancestor of peter? " + peter.isAncestor(bob));
