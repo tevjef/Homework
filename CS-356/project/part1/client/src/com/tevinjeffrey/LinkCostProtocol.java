@@ -16,22 +16,10 @@ public class LinkCostProtocol {
     public static Router recv(Socket clientSocket, Router receivingRouter) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-        String line;
-        int linesRead = 0;
-        String routerNumber = null;
-        String linkCost = null;
-        while ((line = in.readLine()) != null && linesRead <= 2) {
-            linesRead++;
-            if (linesRead == 1) {
-                routerNumber = line;
-            } else {
-                linkCost = line;
-            }
-        }
-        if (routerNumber != null && linkCost != null) {
-            System.out.println("Client: Router " +routerNumber);
-            System.out.println("Client: Link Cost " +linkCost);
-        } else {
+        String routerNumber = in.readLine();
+        String linkCost = in.readLine();
+
+        if (routerNumber == null || linkCost == null) {
             throw new Exception("Router number or Link cost not received.");
         }
 
@@ -41,10 +29,12 @@ public class LinkCostProtocol {
         return router;
     }
 
-    public static void send(Socket client, Router router, Router toRouter) throws IOException {
-        DataOutputStream out = new DataOutputStream(client.getOutputStream());
-        System.out.println("Server: "+ " Sending to router: " + router.getNumber() + " Link cost: "+router.getLinkCost(toRouter.getNumber()));
-        out.writeUTF(String.valueOf(router.getNumber())+"\n"+router.getLinkCost(toRouter.getNumber()));
-        out.flush();
+    public static void send(Socket client, Router router, Router toRouter, String who) throws IOException {
+        PrintWriter printWriter = new PrintWriter(client.getOutputStream());
+        printWriter.print(String.valueOf(router.getNumber()) + "\n" + router.getLinkCost(toRouter.getNumber()) + "\n");
+        printWriter.flush();
+        System.out.println(who + ": sending link cost to " + client.getRemoteSocketAddress());
+        System.out.println("--> Router " + router.getNumber());
+        System.out.println("--> Link Cost " + router.getLinkCost(toRouter.getNumber()));
     }
 }

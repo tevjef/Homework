@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
+        String who = "Server";
         List<Router> knownRouters = new ArrayList<>();
         Router router1 = new Router("Router 1", "127.0.0.1", Integer.parseInt(args[0]));
 
@@ -17,30 +18,35 @@ public class Main {
 
         try {
             ServerSocket serverSocket = new ServerSocket(router1.getPort());
-            System.out.println("Server: Bound to " +  serverSocket.getInetAddress().getHostAddress()
+            System.out.println(who +":  Bound to " +  serverSocket.getInetAddress().getHostAddress()
                     + ":"+serverSocket.getLocalPort());
 
             while(true) {
                 Socket clientSocket = null;
                 try {
                     clientSocket = serverSocket.accept();
-                    System.out.println("Server: Accepting connection from "+ clientSocket.getRemoteSocketAddress());
+                    System.out.println(who +": Accepting connection from " + clientSocket.getRemoteSocketAddress());
 
                     Router router = LinkCostProtocol.recv(clientSocket, router1);
-
                     knownRouters.add(router);
+                    System.out.println(who +": receiving from "+clientSocket.getRemoteSocketAddress().toString());
+                    System.out.println("--> Router " + router.getNumber());
+                    System.out.println("--> Link Cost " + router1.getLinkCost(router.getNumber()));
 
-                    LinkCostProtocol.send(clientSocket, router1, router);
+                    LinkCostProtocol.send(clientSocket, router1, router, who);
 
-                    //System.out.println(router);
 
                     clientSocket.close();
                 } catch (Exception e) {
-                    if (clientSocket != null) {
-                        clientSocket.close();
-                    }
                     e.printStackTrace();
-
+                } finally {
+                    try {
+                        if (clientSocket != null) {
+                            clientSocket.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 

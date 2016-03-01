@@ -9,9 +9,10 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
+        String who = "Client";
 
         Router router0 = new Router("Router 0", "127.0.0.1", 50000);
-        Router router1 = new Router("Router 1", "127.0.0.1", 50007);
+        Router router1 = new Router("Router 1", "empusa.tevindev.me", 50007);
         Router router2 = new Router("Router 2", "127.0.0.1", 50014);
         Router router3 = new Router("Router 3", "127.0.0.1", 50021);
 
@@ -37,31 +38,19 @@ public class Main {
         int port = router1.getPort();
 
         try {
-            System.out.println("Connecting to " + router1);
+            System.out.println(who +": Connecting to " + router1);
             Socket client = new Socket(host, port);
-            client.setSoTimeout();
-            client.setKeepAlive(true);
-            System.out.println("Server: You("+ client.getLocalSocketAddress() + ") are connected to " + client.getRemoteSocketAddress());
+            System.out.println(who +": You(" + client.getLocalSocketAddress() + ") are connected to " + client.getRemoteSocketAddress());
 
-            Thread thread = new Thread(() -> {
-                try {
-                    System.out.println("Waiting for recieves");
-                    Router router = LinkCostProtocol.recv(client, router0);
-                    System.out.println("Client receive " + router);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            thread.start();
-
-
-            LinkCostProtocol.send(client, router0, router1);
-            //Router router = LinkCostProtocol.recv(client, router0);
-            //System.out.println("Client receive " + router);
+            LinkCostProtocol.send(client, router0, router1, who);
+            Router router = LinkCostProtocol.recv(client, router0);
+            System.out.println(who +": receiving from "+client.getRemoteSocketAddress().toString());
+            System.out.println("--> Router " + router.getNumber());
+            System.out.println("--> Link Cost " + router0.getLinkCost(router.getNumber()));
 
 
         } catch (Exception e) {
-            System.out.println("Could not establish connection. " + e.getMessage());
+            System.out.println(who +": Could not establish connection. " + e.getMessage());
         }
     }
 }
