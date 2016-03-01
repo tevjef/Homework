@@ -8,11 +8,13 @@ if (empty($username) || empty($password)) {
 }
 
 $response = loginNjit($username, $password);
+$result = json_decode(checkDatabase($username, $password), true);
+$dbMessage = $result['message'];
+
 if (strpos($response, 'loginok.html') != false) {
-    echo json_encode(array('login' => true, 'message' => 'Your credentials are correct'));
-    saveToDatabase($username, $password);
+    echo json_encode(['login' => true, 'message' => 'Your credentials are correct.' . $dbMessage]);
 }else {
-    echo json_encode(array('login' => false, 'message' => 'Your credentials are incorrect'));
+    echo json_encode(['login' => false, 'message' => 'Your credentials are incorrect.' . $dbMessage]);
 }
 
 function postRequest($url, $headers, $fields) {
@@ -31,10 +33,10 @@ function postRequest($url, $headers, $fields) {
     curl_close($ch);
     return $data;
 }
-function saveToDatabase($user, $pass){
-    $pass = password_hash($pass, PASSWORD_DEFAULT);
+function checkDatabase($user, $pass){
+   /* $pass = password_hash($pass, PASSWORD_DEFAULT);*/
     $fields = "user={$user}&pass={$pass}";
-    postRequest('https://web.njit.edu/~maz9/', [], $fields);
+    return postRequest('https://web.njit.edu/~maz9/DB/', [], $fields);
 }
 
 function loginNjit($user, $pass) {

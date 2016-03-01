@@ -25,11 +25,11 @@ public class Main {
                 "john\n\n");
 
         // Tests to check that relationships were created as expected.
-        System.out.println("Is peter descendant of bob? " + bob.isDescendant(peter));
-        System.out.println("Is bob descendant of peter? " + peter.isDescendant(bob));
-        System.out.println("Is bob ancestor of peter? " + peter.isAncestor(bob));
-        System.out.println("Is peter child of paul? " + paul.isChild(peter));
-        System.out.println("Is peter parent of john? " + john.isParent(peter));
+        System.out.println("Is peter a descendant of bob? " + bob.isDescendant(peter));
+        System.out.println("Is bob a descendant of peter? " + peter.isDescendant(bob));
+        System.out.println("Is bob an ancestor of peter? " + peter.isAncestor(bob));
+        System.out.println("Is peter a child of paul? " + paul.isChild(peter));
+        System.out.println("Is peter a parent of john? " + john.isParent(peter));
 
     }
 }
