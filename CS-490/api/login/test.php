@@ -1,8 +1,8 @@
 <?php
 
-$fields = "user=tj76&pass=pass";
+$fields = "user=tj76&pass=WisrocLinden1";
 $result = postRequest('https://web.njit.edu/~tj76/api/login/login.php', [], $fields);
-var_dump($result);
+echo $result;
 
 function postRequest($url, $headers, $fields) {
     $ch = curl_init();

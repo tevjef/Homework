@@ -1,11 +1,12 @@
 <?php
 
-include 'common.php';
+include '../common.php';
 
 $username = isset($_POST["user"])? $_POST["user"]:'';
 $password = isset($_POST["pass"])? $_POST["pass"]:'';
 
 if (empty($username) || empty($password)) {
+    http_response_code(400);
     echo json_encode(array('message' => 'You must provide the \'user\' and \'pass\' and part of the parameters for the POST request'));
     exit(-1);
 }
