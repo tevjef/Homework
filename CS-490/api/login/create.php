@@ -1,6 +1,6 @@
 <?php
 
-include 'common.php';
+include '../common.php';
 
 $ucid = isset($_POST["ucid"])? $_POST["ucid"]:'';
 $ucid_pass = isset($_POST["ucid_pass"])? $_POST["ucid_pass"]:'';

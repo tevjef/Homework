@@ -1,6 +1,6 @@
 <?php
 
-include 'common.php';
+include '../common.php';
 
 $username = isset($_POST["user"])? $_POST["user"]:'';
 $password = isset($_POST["pass"])? $_POST["pass"]:'';

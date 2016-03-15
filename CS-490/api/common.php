@@ -1,4 +1,8 @@
 <?php
+
+function get_from_db() { return null;}
+function send_to_server() { return null;}
+
 function postRequest($url, $headers, $fields) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
