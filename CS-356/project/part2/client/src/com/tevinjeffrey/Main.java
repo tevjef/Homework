@@ -12,7 +12,7 @@ public class Main {
         String who = "Client";
 
         Router router0 = new Router("Router 0", "127.0.0.1", 50000);
-        Router router1 = new Router("Router 1", "127.0.0.1", 50007);
+        Router router1 = new Router("Router 1", "thirteen.tevindev.me", 50007);
         Router router2 = new Router("Router 2", "127.0.0.1", 50014);
         Router router3 = new Router("Router 3", "127.0.0.1", 50021);
 
@@ -26,7 +26,6 @@ public class Main {
         router0.addLinkCost(router1.getNumber(), 1);
         router0.addLinkCost(router2.getNumber(), 3);
         router0.addLinkCost(router3.getNumber(), 7);
-
 
         LinkCostProtocol.printLinkCost(routerMap);
 
