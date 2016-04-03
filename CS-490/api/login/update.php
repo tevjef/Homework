@@ -7,7 +7,7 @@ $last_name = isset($_POST["last_name"])? $_POST["last_name"]:'';
 
 if (empty($ucid) || empty($user_pass)) {
     http_response_code(400);
-    json_encode(['message'=> "Bad Request - Must provide the ucid, user_pass when updating account", 'error' => true]);
+    json_encode(['message'=> "Bad Request - Must provide the ucid, user_pass when updating account", 'error' => true], JSON_PRETTY_PRINT);
 }
 
 $result = updateUser($ucid, $user_name, $last_name, $first_name, $user_pass);
@@ -16,5 +16,5 @@ if (!is_null($result)) {
     return json_encode(['message'=> "Account updated", 'account' => [$result], 'error' => false]);
 } else {
     http_response_code(400);
-    return json_encode(['message'=> "There was an error updating account", 'account' => [$result], 'error' => true]);
+    return json_encode(['message'=> "There was an error updating account", 'account' => [$result], 'error' => true], JSON_PRETTY_PRINT);
 }

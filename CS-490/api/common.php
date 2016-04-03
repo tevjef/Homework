@@ -78,7 +78,7 @@ function updateUser($ucid, $username, $last, $first, $password) {
  * 3 Junior
  * 4 Senior
  * */
-function createProfile($firstname, $lastname, $relationshipId, $classId, $genderId) {
+function createProfile($firstname, $lastname, $relationshipId, $classId, $genderId, $status) {
     $profileId = initProfile($firstname, $lastname);
     $fields = "opcode=7&profileID={$profileId}";
     if (!empty($lastname)) {
@@ -87,15 +87,19 @@ function createProfile($firstname, $lastname, $relationshipId, $classId, $gender
     if (!empty($firstname)) {
         $fields .= "&firstname={$firstname}";
     }
-    if (!empty($firstname)) {
+    if (!empty($relationshipId)) {
         $fields .= "&search_relationshipID={$relationshipId}";
     }
-    if (!empty($firstname)) {
+    if (!empty($genderId)) {
         $fields .= "&search_genderID={$genderId}";
     }
-    if (!empty($firstname)) {
+    if (!empty($classId)) {
         $fields .= "&search_gradeID={$classId}";
     }
+    if (!empty($status)) {
+        $fields .= "&status={$status}";
+    }
+    return postToDatabase($fields);
 }
 
 function initProfile($firstname, $lastname) {
