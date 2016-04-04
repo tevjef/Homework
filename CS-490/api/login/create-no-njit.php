@@ -15,7 +15,7 @@ if (empty($ucid) || empty($ucid_pass) || empty($user_pass) || empty($user_name) 
 
 $response = loginNjit($ucid, $ucid_pass);
 
-if (strpos($response, 'loginok.html') != false) {
+if (strpos($response, 'loginok.html') != false || true) {
     $result = createUser($user_name, $user_pass, $email, $ucid);
     if (is_null($result)) {
         http_response_code(400);

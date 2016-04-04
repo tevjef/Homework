@@ -1,11 +1,11 @@
 <?php
 
 $ucid = isset($_POST["ucid"])? $_POST["ucid"]:'';
-$privilege = isset($_POST["privilege"])? $_POST["privilege"]:'';
+$privilege = isset($_POST["signed_in_ucid"])? $_POST["signed_in_ucid"]:'';
 
 if (empty($ucid) || empty($privilege)) {
     http_response_code(400);
-    die("Bad Request - Must provide the ucid and privileges when retrieving and account");
+    die(json_encode(['message' => "Bad Request - Must provide the ucid and signed_in_ucid when retrieving and account", 'error' => true]));
 }
 
 $response = get_from_db();

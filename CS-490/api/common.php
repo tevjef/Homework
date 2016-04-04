@@ -25,12 +25,20 @@ function postRequest($url, $headers, $fields) {
 function selectUser($ucid) {
     $fields = "opcode=2&ucid={$ucid}";
     $result = postToDatabase($fields);
+
+    $username = $result['username'];
+    $profileId = $result['search_profileID'];
+    $email = $result['email'];
+    $profile = selectProfile($profileId);
+
+    $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email, 'profile' => $profile];
     //var_dump($result);
-    return $result;
+    return $json;
 }
 
 function getPasswordId($ucid) {
-    $result = json_decode(selectUser($ucid));
+    $fields = "opcode=2&ucid={$ucid}";
+    $result = postToDatabase($fields);
     $passid = $result['passwordID'];
     if (empty($passid)) {
         return null;
@@ -38,7 +46,8 @@ function getPasswordId($ucid) {
     return $passid;
 }
 
-function updateUser($ucid, $username, $last, $first, $password) {
+function updateUser($ucid, $username, $last, $first, $password, $profileId) {
+    //ucid mandatory
     $passId = getPasswordId($ucid);
     $password = password_hash($password, PASSWORD_DEFAULT);
     $fields = "opcode=3&ucid={$ucid}&passwordID={$passId}";
@@ -54,6 +63,9 @@ function updateUser($ucid, $username, $last, $first, $password) {
     if (!empty($password)) {
         $fields .= "&password={$password}";
     }
+    if (!empty($profileId)) {
+        $fields .= "&search_profileID={$profileId}";
+    }
 
     $result = postToDatabase($fields);
     $message = $result['message'];
@@ -65,26 +77,19 @@ function updateUser($ucid, $username, $last, $first, $password) {
 
 }
 
-/*
- * 1 Single
- * 2 Dating
- * 3 Married
- * 4 Complicated
- * */
-
-/*
- * 1 Freshman
- * 2 Sophomore
- * 3 Junior
- * 4 Senior
- * */
-function createProfile($firstname, $lastname, $relationshipId, $classId, $genderId, $status) {
+function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image) {
     $profileId = initProfile($firstname, $lastname);
+    $result = updateUser($ucid,"","","","",$profileId);
+    if (is_null($result)) {
+        return null;
+    }
     $fields = "opcode=7&profileID={$profileId}";
     if (!empty($lastname)) {
+        $lastname = addslashes($lastname);
         $fields .= "&lastname={$lastname}";
     }
     if (!empty($firstname)) {
+        $firstname = addslashes($firstname);
         $fields .= "&firstname={$firstname}";
     }
     if (!empty($relationshipId)) {
@@ -97,9 +102,20 @@ function createProfile($firstname, $lastname, $relationshipId, $classId, $gender
         $fields .= "&search_gradeID={$classId}";
     }
     if (!empty($status)) {
+        $status = addslashes($status);
         $fields .= "&status={$status}";
     }
-    return postToDatabase($fields);
+    if (!empty($image)) {
+        $fields .= "&profilePicPath={$image}";
+    }
+    $result = postToDatabase($fields);
+    $message = $result['message'];
+
+    if (strpos($message, 'updated') !== FALSE) {
+        return selectUser($ucid);
+    } else {
+        return null;
+    }
 }
 
 function initProfile($firstname, $lastname) {
@@ -109,9 +125,23 @@ function initProfile($firstname, $lastname) {
     return $profileId;
 }
 
-function updateProfile($firstname, $lastname) {
+function selectProfile($profileId) {
+    $fields = "opcode=6&profileID={$profileId}";
+    $result = postToDatabase($fields);
 
+    if (!isset($result['profileID'])) return null;
+
+    $grade = getGrade($result['search_gradeID']);
+    $relationship = getRelationship($result['search_relationshipID']);
+    $gender = getGender($result['search_genderID']);
+
+    $json = ['first_name' => $result['firstName'],'last_name' => $result['lastName'],
+        'class_level' => $grade, 'relationship' => $relationship, 'gender' => $gender, 'about' => $result['status'],
+        'image' => $result['profilePicPath']];
+    return $json;
 }
+
+
 
 function createUser($user, $pass, $email, $ucid) {
     $pass = password_hash($pass, PASSWORD_DEFAULT);
@@ -124,7 +154,8 @@ function createUser($user, $pass, $email, $ucid) {
 }
 
 function checkPassword($user, $pass){
-    $result = selectUser($user);
+    $fields = "opcode=2&ucid={$user}";
+    $result = postToDatabase($fields);
     if (password_verify($pass, $result['password'])) {
         return true;
     } else {
@@ -154,4 +185,63 @@ function loginNjit($user, $pass) {
     );
     $fields = "user={$user}&pass={$pass}&uuid=0xACA021";
     return postRequest('https://cp4.njit.edu//*cp/home/login*/', $headers, $fields);
+}
+
+
+/*
+ * 1 Freshman
+ * 2 Sophomore
+ * 3 Junior
+ * 4 Senior
+ * */
+
+function getGrade($gradeID) {
+    switch ($gradeID) {
+        case 1:
+            return "Freshman";
+        case 2:
+            return  "Sophomore";
+        case 3:
+            return "Junior";
+        case 4:
+            return "Senior";
+        default:
+            return "Error getting grade, should not happen";
+    }
+}
+
+
+/*
+ * 1 Single
+ * 2 Dating
+ * 3 Married
+ * 4 Complicated
+ * */
+
+function getRelationship($relationshipID) {
+    switch ($relationshipID) {
+        case 1:
+            return "Single";
+        case 2:
+            return "Dating";
+        case 3:
+            return "Married";
+        case 4:
+            return "Complicated";
+        default:
+            return "Error getting relationship, should not happen";
+    }
+}
+
+function getGender($genderID) {
+    switch ($genderID) {
+        case 1:
+            return "Male";
+        case 2:
+            return "Female";
+        case 3:
+            return "Other";
+        default:
+            return "Error getting gender, should not happen";
+    }
 }
