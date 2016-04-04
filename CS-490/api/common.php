@@ -245,3 +245,7 @@ function getGender($genderID) {
             return "Error getting gender, should not happen";
     }
 }
+
+function encode_json($value) {
+    return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+}
