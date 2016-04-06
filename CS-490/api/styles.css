@@ -1,0 +1,33 @@
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    padding-left: 30px;
+}
+label {
+    display: block;
+}
+
+
+.left {
+    float : left;
+    width: 50%;
+}
+
+.right {
+    float : right;
+    width: 50%;
+}
+
+.right.details {
+    margin-top: 50px;
+}
+
+.results {
+    padding: 50px;
+}
+
+pre {
+    white-space: pre-wrap;       /* CSS 3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}

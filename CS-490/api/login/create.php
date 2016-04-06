@@ -14,16 +14,18 @@ if (empty($ucid) || empty($ucid_pass) || empty($user_pass) || empty($user_name) 
 }
 
 $response = loginNjit($ucid, $ucid_pass);
-
 if (strpos($response, 'loginok.html') != false) {
     $result = createUser($user_name, $user_pass, $email, $ucid);
     if (is_null($result)) {
         http_response_code(400);
         die(json_encode(['message' => "The ucid already exists. Please login.", 'error' => true]));
-    } else {
+    } else if (!is_null($result)) {
         http_response_code(201);
         die(json_encode(['message' => "Account created",
             'account' => $result,'error' => false]));
+    } else {
+        http_response_code(404);
+        die(json_encode(['message' => "Error contacting database, are you on NJIT network?", 'error' => true]));
     }
 } else {
     http_response_code(401);

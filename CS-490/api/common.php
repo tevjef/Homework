@@ -32,7 +32,6 @@ function selectUser($ucid) {
     $profile = selectProfile($profileId);
 
     $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email, 'profile' => $profile];
-    //var_dump($result);
     return $json;
 }
 
@@ -164,7 +163,7 @@ function checkPassword($user, $pass){
 }
 
 function postToDatabase($fields) {
-    $result = postRequest('http://osl82.njit.edu/~maz9/DB/P2/', [], $fields);
+    $result = postRequest('https://web.njit.edu/~maz9/DB/P2/', [], $fields);
     //var_dump($result);
     return json_decode($result, true);
 }
@@ -184,7 +183,7 @@ function loginNjit($user, $pass) {
         'DNT' => '1',
     );
     $fields = "user={$user}&pass={$pass}&uuid=0xACA021";
-    return postRequest('https://cp4.njit.edu//*cp/home/login*/', $headers, $fields);
+    return postRequest('https://cp4.njit.edu/cp/home/login', $headers, $fields);
 }
 
 
