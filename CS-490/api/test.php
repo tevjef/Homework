@@ -4,26 +4,137 @@
 <script type="text/javascript" src="main.js"></script>
 <link rel="stylesheet" href="styles.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+
+<body>
 <div class="left">
-    <div style="padding: 5%">
-    <form id="form-create-account" action="login/create.php" method="post">
-            <div class="left">
-                <h2>Creating an account</h2>
-                <label for="ucid">UCID:</label><input type="text" placeholder="ucid" name="ucid" id="ucid">
-                <label for="ucid">UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" id="ucid">
-                <label for="ucid">Username:</label><input type="text" placeholder="user_name" name="user_name" id="ucid">
-                <label for="ucid">Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" id="ucid">
-                <label for="ucid">Email:</label><input type="email" placeholder="email" name="email" id="ucid"><br><br>
-                <input type="submit" value="Submit" name="submit-create-account">
-            </div>
-            <div class="right details">
-                <p>Save ucid and user_pass to use to authenticate future requests demonstrate that this box of text works</p>
-            </div>
-    </form>
+        <form id="form-create-account" action="login/create.php" method="post">
+                <div class="form">
+                    <h3>Creating an account</h3>
+                    <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
+                    <label>UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" id="input-box">
+                    <label>Username:</label><input type="text" placeholder="user_name" name="user_name" id="input-box">
+                    <label>Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" id="input-box">
+                    <label>Email:</label><input type="email" placeholder="email" name="email" id="input-box"><br><br>
+                    <input type="submit" value="Submit">
+                </div>
+                <div class="right details">
+                    <p>Save ucid and user_pass to use to authenticate future requests</p>
+                </div>
+        </form>
+    
+    <form id="form-create-account-no-njit" action="login/create-no-njit.php" method="post">
+        <div class="form">
+            <h3>Creating an account (No NJIT Check)</h3>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
+            <label>UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" id="input-box">
+            <label>Username:</label><input type="text" placeholder="user_name" name="user_name" id="input-box">
+            <label>Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" id="input-box">
+            <label>Email:</label><input type="email" placeholder="email" name="email" id="input-box"><br><br>
+            <input type="submit" value="Submit">
         </div>
+        <div class="right details">
+            <p>Save ucid and user_pass to use to authenticate future requests</p>
+        </div>
+    </form>
+
+    <form id="form-login-account" action="login/login.php" method="post">
+        <div class="form">
+            <h3>Login into account</h3>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
+            <label>Password:</label><input type="password" placeholder="pass" name="pass" id="input-box"><br><br>
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+            <p>Save ucid and user_pass to use to authenticate future requests</p>
+        </div>
+    </form>
+
+    <form id="form-create-profile" action="profile/create.php" method="post">
+        <div class="form">
+            <h3>Create a profile</h3>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
+            <label>First Name:</label><input type="text" placeholder="first_name" name="first_name" id="input-box">
+            <label>Last Name:</label><input type="text" placeholder="last_name" name="last_name" id="input-box">
+
+            <label for="textarea"> About </label>
+            <textarea id="textarea" name="about" placeholder="about" rows="5" cols="30"></textarea>
+
+
+            <label for="class-select"> Class Level</label>
+            <select id="class-select" name="class_level">
+                <option value="1">Freshman</option>
+                <option value="2">Sophomore</option>
+                <option value="3">Junior</option>
+                <option value="4">Senior</option>
+            </select>
+
+            <label for="relationship-select"> Relationship Status </label>
+            <select id="relationship-select" name="relationship">
+                <option value="1">Single</option>
+                <option value="2">Dating</option>
+                <option value="3">Married</option>
+                <option value="4">Complicated</option>
+            </select>
+
+
+            <label for="gender-select"> Gender </label>
+            <select id="gender-select" name="gender">
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="3">Other</option>
+            </select> <br><br>
+
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+            <p>Save ucid and user_pass to use to authenticate future requests</p>
+        </div>
+    </form>
+
+    <form id="form-update-profile" action="profile/update.php" method="post">
+        <div class="form">
+            <h3>Update a profile</h3>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
+            <label>First Name:</label><input type="text" placeholder="first_name" name="first_name" id="input-box">
+            <label>Last Name:</label><input type="text" placeholder="last_name" name="last_name" id="input-box">
+
+            <label for="textarea"> About </label>
+            <textarea id="textarea" name="about" placeholder="about" rows="5" cols="30"></textarea>
+
+
+            <label for="class-select"> Class Level</label>
+            <select id="class-select" name="class_level">
+                <option value="1">Freshman</option>
+                <option value="2">Sophomore</option>
+                <option value="3">Junior</option>
+                <option value="4">Senior</option>
+            </select>
+
+            <label for="relationship-select"> Relationship Status </label>
+            <select id="relationship-select" name="relationship">
+                <option value="1">Single</option>
+                <option value="2">Dating</option>
+                <option value="3">Married</option>
+                <option value="4">Complicated</option>
+            </select>
+
+
+            <label for="gender-select"> Gender </label>
+            <select id="gender-select" name="gender">
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="3">Other</option>
+            </select> <br><br>
+
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+            <p>Save ucid and user_pass to use to authenticate future requests</p>
+        </div>
+    </form>
 
 </div>
-<div style="position: fixed; top: 0; right: 0; height: 100%; float: right; width: 50%; background-color: #f0f0f0">
+<div class="results-panel">
     <div class="results">
         <h3>Results</h3>
         <pre class="output">

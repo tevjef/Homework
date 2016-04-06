@@ -7,7 +7,7 @@ $password = isset($_POST["pass"])? $_POST["pass"]:'';
 
 if (empty($ucid) || empty($password)) {
     http_response_code(400);
-    echo encode_json(['message' => 'Bad Request - You must provide the \'ucid\' and \'pass\' and part of the parameters for the POST request']);
+    echo encode_json(['message' => 'Bad Request - You must provide the \'ucid\' and \'pass\' as part of the parameters for the POST request', 'error' => true]);
     exit(-1);
 }
 

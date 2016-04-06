@@ -1,7 +1,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    padding-left: 30px;
+    padding: 2%;
 }
 label {
     display: block;
@@ -9,8 +9,23 @@ label {
 
 
 .left {
+    position: relative;
+    float : left;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+}
+
+.form {
     float : left;
     width: 50%;
+}
+
+form {
+    display: block;
+    width: 100%;
+    float: left;
 }
 
 .right {
@@ -20,10 +35,15 @@ label {
 
 .right.details {
     margin-top: 50px;
+    margin-inside: auto;
 }
 
 .results {
     padding: 50px;
+}
+
+.results-panel {
+    position: fixed; top: 0; right: 0; height: 100%; float: right; width: 50%; background-color: #f0f0f0
 }
 
 pre {

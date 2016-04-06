@@ -8,9 +8,13 @@ $(document).ready(function(){
     };
 
     $('#form-create-account').submit(submitAction);
+    $('#form-create-account-no-njit').submit(submitAction);
+    $('#form-login-account').submit(submitAction);
+    $('#form-create-profile').submit(submitAction);
+    $('#form-update-profile').submit(submitAction);
 
     function postRequest($form) {
-        $results.text("Getting from server...")
+        $results.text("Talking to server...")
         $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
                 $results.text(xhr.responseText)
             },'json')

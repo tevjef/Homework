@@ -9,14 +9,16 @@ $class_level = isset($_POST["class_level"])? $_POST["class_level"]:'';
 $about = isset($_POST["about"])? $_POST["about"]:'';
 $relationship = isset($_POST["relationship"])? $_POST["relationship"]:'';
 $gender = isset($_POST["gender"])? $_POST["gender"]:'';
-$image = isset($_POST["image"])? $_POST["image"]:'';
+//$image = isset($_POST["image"])? $_POST["image"]:'';
 
-if (empty($ucid) || empty($first_name) || empty($last_name) || empty($class_level) || empty($gender) || empty($relationship) || empty($about) || empty($image)) {
+if (empty($ucid) || empty($first_name) || empty($last_name) || empty($class_level) || empty($gender) || empty($relationship) || empty($about)) {
     http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide ucid, first_name, last_name, about, gender [1(male), 2(Female), 3(Other)], class_level [1(Freshman), 2(Sophomore), 3 (Junior), 4 (Senior)], relationship  [1 (Single), 2 (Dating), 3 (Married), 4 (Complicated)] and image fields creating a profile.", 'error' => true]));
+    die(encode_json(['message' => "Bad Request - Must provide ucid, first_name, last_name, about, gender
+     [1, 2, 3] => [Male, Female, Other], class_level [1, 2, 3, 4] => [ Freshman, Sophomore, Junior, Senior]
+, relationship  [1, 2, 3, 4] => [Single, Dating, Married, Complicated] fields when creating a profile.", 'error' => true]));
 }
 
-$result = createProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, $image);
+$result = createProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, "");
 if (is_null($result)) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error creation profile", 'error' => true]));

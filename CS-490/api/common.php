@@ -45,6 +45,16 @@ function getPasswordId($ucid) {
     return $passid;
 }
 
+function getProfileId($ucid) {
+    $fields = "opcode=2&ucid={$ucid}";
+    $result = postToDatabase($fields);
+    $profileid = $result['search_profileID'];
+    if (empty($profileid)) {
+        return null;
+    }
+    return $profileid;
+}
+
 function updateUser($ucid, $username, $last, $first, $password, $profileId) {
     //ucid mandatory
     $passId = getPasswordId($ucid);
@@ -117,6 +127,47 @@ function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     }
 }
 
+
+function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image) {
+    $profileId = getProfileId($ucid);
+    if (is_null($profileId)) {
+        return null;
+    }
+    $fields = "opcode=7&profileID={$profileId}";
+    if (!empty($lastname)) {
+        $lastname = addslashes($lastname);
+        $fields .= "&lastname={$lastname}";
+    }
+    if (!empty($firstname)) {
+        $firstname = addslashes($firstname);
+        $fields .= "&firstname={$firstname}";
+    }
+    if (!empty($relationshipId)) {
+        $fields .= "&search_relationshipID={$relationshipId}";
+    }
+    if (!empty($genderId)) {
+        $fields .= "&search_genderID={$genderId}";
+    }
+    if (!empty($classId)) {
+        $fields .= "&search_gradeID={$classId}";
+    }
+    if (!empty($status)) {
+        $status = addslashes($status);
+        $fields .= "&status={$status}";
+    }
+    if (!empty($image)) {
+        $fields .= "&profilePicPath={$image}";
+    }
+    $result = postToDatabase($fields);
+    $message = $result['message'];
+
+    if (strpos($message, 'updated') !== FALSE) {
+        return selectUser($ucid);
+    } else {
+        return null;
+    }
+}
+
 function initProfile($firstname, $lastname) {
     $fields = "opcode=5&firstname={$firstname}&lastname={$lastname}";
     $result = postToDatabase($fields);
@@ -147,7 +198,7 @@ function createUser($user, $pass, $email, $ucid) {
     $fields = "opcode=1&username={$user}&password={$pass}&ucid={$ucid}&email={$email}";
     $result = postToDatabase($fields);
     if (strpos(strtolower($result['message']), 'exists') !== FALSE) {
-       return null;
+        return null;
     }
     return selectUser($ucid);
 }
