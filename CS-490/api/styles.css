@@ -43,7 +43,8 @@ form {
 }
 
 .results-panel {
-    position: fixed; top: 0; right: 0; height: 100%; float: right; width: 50%; background-color: #f0f0f0
+    position: fixed; top: 0; right: 0; height: 100%; float: right; width: 50%; background-color: #f0f0f0;overflow-y:scroll;
+    overflow-x:hidden;
 }
 
 pre {

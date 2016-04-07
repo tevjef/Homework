@@ -84,6 +84,8 @@
                 <option value="3">Other</option>
             </select> <br><br>
 
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box">
+
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
@@ -91,7 +93,7 @@
         </div>
     </form>
 
-    <form id="form-update-profile" action="profile/update.php" method="post">
+    <form id="form-update-profile" action="profile/update.php" method="post" >
         <div class="form">
             <h3>Update a profile</h3>
             <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
@@ -125,6 +127,8 @@
                 <option value="2">Female</option>
                 <option value="3">Other</option>
             </select> <br><br>
+
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box">
 
             <input type="submit" value="Submit">
         </div>

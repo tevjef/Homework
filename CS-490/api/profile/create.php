@@ -9,7 +9,7 @@ $class_level = isset($_POST["class_level"])? $_POST["class_level"]:'';
 $about = isset($_POST["about"])? $_POST["about"]:'';
 $relationship = isset($_POST["relationship"])? $_POST["relationship"]:'';
 $gender = isset($_POST["gender"])? $_POST["gender"]:'';
-//$image = isset($_POST["image"])? $_POST["image"]:'';
+$image = getUploaded();
 
 if (empty($ucid) || empty($first_name) || empty($last_name) || empty($class_level) || empty($gender) || empty($relationship) || empty($about)) {
     http_response_code(400);
@@ -18,10 +18,10 @@ if (empty($ucid) || empty($first_name) || empty($last_name) || empty($class_leve
 , relationship  [1, 2, 3, 4] => [Single, Dating, Married, Complicated] fields when creating a profile.", 'error' => true]));
 }
 
-$result = createProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, "");
+$result = createProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, $image);
 if (is_null($result)) {
     http_response_code(400);
-    die(encode_json(['message' => "There was an error creation profile", 'error' => true]));
+    die(encode_json(['message' => "There was an error creation profile. Is the UCID registered? Does the profile already exist?", 'error' => true]));
 } else {
     http_response_code(200);
     die(encode_json(['message' => $result, 'error' => false]));

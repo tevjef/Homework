@@ -3,7 +3,7 @@
 include '../common.php';
 
 
-$ucid = isset($_POST["ucid"])? $_POST["ucid"]:'';
+$ucid = isset($_POST["profile_ucid"])? $_POST["profile_ucid"]:'';
 $privilege = isset($_POST["signed_in_ucid"])? $_POST["signed_in_ucid"]:'';
 
 if (empty($ucid) || empty($privilege)) {

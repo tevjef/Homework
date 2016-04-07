@@ -7,11 +7,16 @@ $(document).ready(function(){
         return false;
     };
 
+    var submitMutipartAction = function(){
+        postMultipartRequest($(this));
+        return false;
+    };
+
     $('#form-create-account').submit(submitAction);
     $('#form-create-account-no-njit').submit(submitAction);
     $('#form-login-account').submit(submitAction);
-    $('#form-create-profile').submit(submitAction);
-    $('#form-update-profile').submit(submitAction);
+    $('#form-create-profile').submit(submitMutipartAction);
+    $('#form-update-profile').submit(submitMutipartAction);
 
     function postRequest($form) {
         $results.text("Talking to server...")
@@ -23,5 +28,28 @@ $(document).ready(function(){
             });
         return false
     }
+
+
+    function postMultipartRequest($form) {
+        var formData = new FormData($form[0]);
+        $results.text("Talking to server...");
+        $.ajax({
+            url: $form.attr('action'),
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response, status, xhr){
+                $results.text(xhr.responseText)
+            },
+            error : function(xhr, textStatus, errorThrown) {
+                $results.text(xhr.responseText)
+            }
+        });
+        return false
+    }
+
 
 });

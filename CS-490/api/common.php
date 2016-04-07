@@ -1,5 +1,9 @@
 <?php
 
+if( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+    error_reporting( error_reporting() & ~E_NOTICE );
+}
+
 function postRequest($url, $headers, $fields) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -26,29 +30,32 @@ function selectUser($ucid) {
     $fields = "opcode=2&ucid={$ucid}";
     $result = postToDatabase($fields);
 
-    $username = $result['username'];
-    $profileId = $result['search_profileID'];
-    $email = $result['email'];
-    $profile = selectProfile($profileId);
+    if (isset($result['search_profileID'])) {
+        $username = $result['username'];
+        $profileId = $result['search_profileID'];
+        $email = $result['email'];
+        $profile = selectProfile($profileId);
 
-    $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email, 'profile' => $profile];
-    return $json;
+        $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email, 'profile' => $profile];
+        return $json;
+    }
+    return null;
 }
 
 function getPasswordId($ucid) {
     $fields = "opcode=2&ucid={$ucid}";
     $result = postToDatabase($fields);
-    $passid = $result['passwordID'];
-    if (empty($passid)) {
+    if (isset($result['passwordID'])) {
+        return $result['passwordID'];
+    } else {
         return null;
     }
-    return $passid;
 }
 
 function getProfileId($ucid) {
     $fields = "opcode=2&ucid={$ucid}";
     $result = postToDatabase($fields);
-    $profileid = $result['search_profileID'];
+    $profileid = isset($result['search_profileID'])? $result['search_profileID']:'';
     if (empty($profileid)) {
         return null;
     }
@@ -87,6 +94,10 @@ function updateUser($ucid, $username, $last, $first, $password, $profileId) {
 }
 
 function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image) {
+    $result = selectUser($ucid);
+    if (!is_null($result['profile'])) {
+        return null;
+    }
     $profileId = initProfile($firstname, $lastname);
     $result = updateUser($ucid,"","","","",$profileId);
     if (is_null($result)) {
@@ -156,6 +167,7 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
         $fields .= "&status={$status}";
     }
     if (!empty($image)) {
+        $image = addslashes($image);
         $fields .= "&profilePicPath={$image}";
     }
     $result = postToDatabase($fields);
@@ -178,7 +190,6 @@ function initProfile($firstname, $lastname) {
 function selectProfile($profileId) {
     $fields = "opcode=6&profileID={$profileId}";
     $result = postToDatabase($fields);
-
     if (!isset($result['profileID'])) return null;
 
     $grade = getGrade($result['search_gradeID']);
@@ -214,6 +225,7 @@ function checkPassword($user, $pass){
 }
 
 function postToDatabase($fields) {
+    //var_dump($fields);
     $result = postRequest('https://web.njit.edu/~maz9/DB/P2/', [], $fields);
     //var_dump($result);
     return json_decode($result, true);
@@ -298,4 +310,49 @@ function getGender($genderID) {
 
 function encode_json($value) {
     return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+}
+
+
+function getUploaded() {
+    if (!empty($_FILES["file"]["name"])) {
+        $target_dir = "uploads/";
+        if (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+            $target_dir = $_SERVER["CONTEXT_DOCUMENT_ROOT"] . '/api/profile/uploads/';
+        }
+        $file_name = $_SERVER['REQUEST_TIME'] * 1000 . '_' . basename($_FILES["file"]["name"]);
+        $target_file = $target_dir . $file_name;
+
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        // Check if image file is a actual image or fake image
+        if (isset($_POST["submit"])) {
+            $check = getimagesize($_FILES["file"]["tmp_name"]);
+            if ($check !== false) {
+                $uploadOk = 1;
+            } else {
+                http_response_code(400);
+                die(encode_json(['message' => "Bad request - File provided was not a png, jpeg or gif. " . $check["mime"] . ".", 'error' => true]));
+            }
+        }
+
+        // Check file size
+        if ($_FILES["file"]["size"] > 5000000) {
+            http_response_code(413);
+            die(encode_json(['message' => "Payload too large - File provided was too large. Must be less than 5MB", 'error' => true]));
+        }
+
+        // Allow certain file formats
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+            && $imageFileType != "gif"
+        ) {
+            http_response_code(400);
+            die(encode_json(['message' => "Bad request - File provided was not a png, jpeg or gif.", 'error' => true]));
+        }
+
+        if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
+            return 'http://web.njit.edu/~tj76/api/profile/uploads/' . $file_name;
+        } else {
+            return "";
+        }
+    }
 }
