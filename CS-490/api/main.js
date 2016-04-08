@@ -7,7 +7,7 @@ $(document).ready(function(){
         return false;
     };
 
-    var submitMutipartAction = function(){
+    var submitMultipartAction = function(){
         postMultipartRequest($(this));
         return false;
     };
@@ -15,8 +15,9 @@ $(document).ready(function(){
     $('#form-create-account').submit(submitAction);
     $('#form-create-account-no-njit').submit(submitAction);
     $('#form-login-account').submit(submitAction);
-    $('#form-create-profile').submit(submitMutipartAction);
-    $('#form-update-profile').submit(submitMutipartAction);
+    $('#form-create-profile').submit(submitMultipartAction);
+    $('#form-update-profile').submit(submitMultipartAction);
+    $('#form-create-post').submit(submitAction);
 
     function postRequest($form) {
         $results.text("Talking to server...")

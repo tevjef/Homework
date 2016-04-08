@@ -45,7 +45,7 @@
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
-            <p>Save ucid and user_pass to use to authenticate future requests</p>
+            <p>When logging in the server returns a profile object. If it is null redirect to the create a profile page else redirect to their own page.</p>
         </div>
     </form>
 
@@ -84,7 +84,7 @@
                 <option value="3">Other</option>
             </select> <br><br>
 
-            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box">
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br>
 
             <input type="submit" value="Submit">
         </div>
@@ -128,12 +128,28 @@
                 <option value="3">Other</option>
             </select> <br><br>
 
-            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box">
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br>
 
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
             <p>Save ucid and user_pass to use to authenticate future requests</p>
+        </div>
+    </form>
+
+
+    <form id="form-create-post" action="profile/post/create.php" method="post" >
+        <div class="form">
+            <h3>Create a post</h3>
+            <label>Post to:</label><input type="text" placeholder="to_ucid" name="to_ucid" id="input-box">
+            <label>From:</label><input type="text" placeholder="from_ucid" name="from_ucid" id="input-box">
+            <label for="textarea"> About </label>
+            <textarea id="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
+
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+            <p></p>
         </div>
     </form>
 

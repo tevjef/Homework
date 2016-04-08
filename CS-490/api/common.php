@@ -26,11 +26,52 @@ function postRequest($url, $headers, $fields) {
     }
 }
 
+function isAdmin($ucid) {
+    $profileId = getProfileId($ucid);
+    $fields = "opcode=14&table=adminprofile";
+    $result = postToDatabase($fields);
+    $flag = false;
+    foreach ($result['data'] as $val) {
+        //var_dump($profileId);
+        //var_dump($val['search_profileID']);
+        if (strcmp($profileId, $val['search_profileID']) == 0) {
+            $flag = true;
+        }
+    }
+    return $flag;
+}
+
+function createPost($to_ucid, $from_ucid,$postText) {
+    $to_profileId = getProfileId($to_ucid);
+    $from_profileId = getProfileId($from_ucid);
+
+    $timestamp = date('Y-m-d H:i:s',time()) ;
+    $fields = "opcode=9&posterID={$from_profileId}&profileID={$to_profileId}&postText={$postText}&timeStamp={$timestamp}";
+    $result = postToDatabase($fields);
+    $message = $result['message'];
+    if (strpos($message, 'Inserted') !== FALSE) {
+        return true;
+    } else {
+        return null;
+    }
+}
+
+function selectPosts($ucid) {
+    $profileId = getProfileId($ucid);
+    $fields = "opcode=11&profileID={$profileId}";
+    $result = postToDatabase($fields);
+    $posts = [];
+    foreach ($result['data'] as $item) {
+        array_push($posts, ['postText' => $item['postText'], 'timeStamp' => $item['timeStamp']]);
+    }
+    return $posts;
+}
+
 function selectUser($ucid) {
     $fields = "opcode=2&ucid={$ucid}";
     $result = postToDatabase($fields);
 
-    if (isset($result['search_profileID'])) {
+    if (isset($result['username'])) {
         $username = $result['username'];
         $profileId = $result['search_profileID'];
         $email = $result['email'];
@@ -41,6 +82,28 @@ function selectUser($ucid) {
     }
     return null;
 }
+
+function selectUserOptions($ucid, $options = []) {
+    $fields = "opcode=2&ucid={$ucid}";
+    $result = postToDatabase($fields);
+
+    if (isset($result['username'])) {
+        $username = $result['username'];
+        $profileId = $result['search_profileID'];
+        $email = $result['email'];
+
+        $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email];
+        if ($options['profile']) {
+            $json['profile'] = selectProfile($profileId);
+        }
+        if ($options['posts']) {
+            $json['profile']['posts'] = selectPosts($ucid);
+        }
+        return $json;
+    }
+    return null;
+}
+
 
 function getPasswordId($ucid) {
     $fields = "opcode=2&ucid={$ucid}";
@@ -356,3 +419,4 @@ function getUploaded() {
         }
     }
 }
+

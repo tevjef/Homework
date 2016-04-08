@@ -3,6 +3,7 @@
 include_once '../common.php';
 
 $ucid = isset($_POST["ucid"])? $_POST["ucid"]:'';
+$privileged_user = isset($_POST["signed_in_ucid"])? $_POST["signed_in_ucid"]:'';
 $first_name = isset($_POST["first_name"])? $_POST["first_name"]:'';
 $last_name = isset($_POST["last_name"])? $_POST["last_name"]:'';
 $class_level = isset($_POST["class_level"])? $_POST["class_level"]:'';
@@ -11,9 +12,9 @@ $relationship = isset($_POST["relationship"])? $_POST["relationship"]:'';
 $gender = isset($_POST["gender"])? $_POST["gender"]:'';
 $image = getUploaded();
 
-if (empty($ucid) || empty($first_name) || empty($last_name)) {
+if (empty($ucid)) {
     http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide ucid, first_name and last_name when updating a profile.", 'error' => true]));
+    die(encode_json(['message' => "Bad Request - Must provide ucid when updating a profile.", 'error' => true]));
 }
 
 
