@@ -62,9 +62,18 @@ function selectPosts($ucid) {
     $result = postToDatabase($fields);
     $posts = [];
     foreach ($result['data'] as $item) {
-        array_push($posts, ['postText' => $item['postText'], 'timeStamp' => $item['timeStamp']]);
+        array_push($posts, ['postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
+            'posted_by' => getCacheProfile($item['search_senderprofileID'])]);
     }
     return $posts;
+}
+
+$profileCache = [];
+function getCacheProfile($profileId) {
+    if (!isset($GLOBALS['profileCache'][$profileId])) {
+        $GLOBALS['profileCache'][$profileId] = selectSmallProfile($profileId);
+    }
+    return $GLOBALS['profileCache'][$profileId];
 }
 
 function selectUser($ucid) {
@@ -265,7 +274,13 @@ function selectProfile($profileId) {
     return $json;
 }
 
-
+function selectSmallProfile($profileId) {
+    $fields = "opcode=6&profileID={$profileId}";
+    $result = postToDatabase($fields);
+    if (!isset($result['profileID'])) return null;
+    $json = ['first_name' => $result['firstName'],'last_name' => $result['lastName'], 'image' => $result['profilePicPath']];
+    return $json;
+}
 
 function createUser($user, $pass, $email, $ucid) {
     $pass = password_hash($pass, PASSWORD_DEFAULT);

@@ -17,6 +17,7 @@ $(document).ready(function(){
     $('#form-login-account').submit(submitAction);
     $('#form-create-profile').submit(submitMultipartAction);
     $('#form-update-profile').submit(submitMultipartAction);
+    $('#form-select-profile').submit(submitAction);
     $('#form-create-post').submit(submitAction);
 
     function postRequest($form) {

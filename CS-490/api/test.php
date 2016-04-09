@@ -82,9 +82,9 @@
                 <option value="1">Male</option>
                 <option value="2">Female</option>
                 <option value="3">Other</option>
-            </select> <br><br>
+            </select> <br>
 
-            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br>
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br><br>
 
             <input type="submit" value="Submit">
         </div>
@@ -106,6 +106,7 @@
 
             <label for="class-select"> Class Level</label>
             <select id="class-select" name="class_level">
+                <option selected disabled hidden style='display: none' value=''></option>
                 <option value="1">Freshman</option>
                 <option value="2">Sophomore</option>
                 <option value="3">Junior</option>
@@ -114,6 +115,7 @@
 
             <label for="relationship-select"> Relationship Status </label>
             <select id="relationship-select" name="relationship">
+                <option selected disabled hidden style='display: none' value=''></option>
                 <option value="1">Single</option>
                 <option value="2">Dating</option>
                 <option value="3">Married</option>
@@ -123,17 +125,38 @@
 
             <label for="gender-select"> Gender </label>
             <select id="gender-select" name="gender">
+                <option selected disabled hidden style='display: none' value=''></option>
                 <option value="1">Male</option>
                 <option value="2">Female</option>
                 <option value="3">Other</option>
-            </select> <br><br>
+            </select> <br>
 
-            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br>
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br><br>
 
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
             <p>Save ucid and user_pass to use to authenticate future requests</p>
+        </div>
+    </form>
+
+
+    <form id="form-select-profile" action="profile/index.php" method="post" >
+        <div class="form">
+            <h3>Get a profile</h3>
+            <label>Profile UCID</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
+            <label>Signed in user UCID</label><input type="text" placeholder="signed_in_ucid" name="signed_in_ucid" id="input-box"><br><br>
+            <input type="checkbox" name="profile" value="true" checked id="input-box">Get profile info<br>
+            <input type="checkbox" name="posts" value="true" checked id="input-box">Get All Posts <br>
+            <input type="checkbox" name="groups_in" value="true" disabled="disabled" id="input-box">Get Groups In<br>
+            <input type="checkbox" name="groups_own" value="true"  disabled="disabled" id="input-box">Get Groups Owned<br>
+            <input type="checkbox" name="recommend_people" value="true"  disabled="disabled" id="input-box">Get Recommended People<br>
+            <input type="checkbox" name="recommend_groups" value="true"  disabled="disabled" id="input-box">Get Recommended Groups<br>
+
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+            <p>Provide the ucid of the profile you want to view and the ucid of the person currently signed in. I use this to hide certain information from the outsiders1.</p>
         </div>
     </form>
 

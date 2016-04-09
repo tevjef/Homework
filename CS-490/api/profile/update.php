@@ -24,6 +24,6 @@ if (is_null($result)) {
     die(encode_json(['message' => "There was an error updating profile. Is the UCID registered?", 'error' => true]));
 } else {
     http_response_code(200);
-    die(encode_json(['message' => $result, 'error' => false]));
+    die(encode_json(['account' => $result, 'error' => false]));
 
 }
