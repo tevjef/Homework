@@ -1,6 +1,6 @@
 $(document).ready(function(){
     var $results = $('.output');
-    $results.text("no data")
+    $results.text("no data");
 
     var submitAction = function(){
         postRequest($(this));
@@ -12,16 +12,24 @@ $(document).ready(function(){
         return false;
     };
 
-    $('#form-create-account').submit(submitAction);
-    $('#form-create-account-no-njit').submit(submitAction);
-    $('#form-login-account').submit(submitAction);
-    $('#form-create-profile').submit(submitMultipartAction);
-    $('#form-update-profile').submit(submitMultipartAction);
-    $('#form-select-profile').submit(submitAction);
-    $('#form-create-post').submit(submitAction);
+    var $form_create_account = $('#form-create-account');
+    var $form_create_account_no_njit = $('#form-create-account-no-njit');
+    var $form_login_account = $('#form-login-account');
+    var $form_create_profile = $('#form-create-profile');
+    var $form_update_profile = $('#form-update-profile');
+    var $form_select_profile = $('#form-select-profile');
+    var $form_create_post = $('#form-create-post');
 
+    $form_create_account.submit(submitAction);
+    $form_create_account_no_njit.submit(submitAction);
+    $form_login_account.submit(submitAction);
+    $form_create_profile.submit(submitMultipartAction);
+    $form_update_profile.submit(submitMultipartAction);
+    $form_select_profile.submit(submitAction);
+    $form_create_post.submit(submitAction);
+    
     function postRequest($form) {
-        $results.text("Talking to server...")
+        $results.text("Talking to server...");
         $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
                 $results.text(xhr.responseText)
             },'json')
@@ -53,5 +61,34 @@ $(document).ready(function(){
         return false
     }
 
+
+    $form_create_profile.find('.interests-select').autocomplete({
+        source: "interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelect($form_create_profile)
+    });
+
+    $form_update_profile.find(".interests-select").autocomplete({
+        source: "interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelect($form_update_profile)
+    });
+
+    function onSelect($form) {
+        return function( event, ui ) {
+            console.log("Inside onSelect");
+            // Create a shadow input field that will be transferred to the server.
+            var input = $("<input>").attr({'type':'hidden', 'name':'interests[]'}).val(ui.item.interest_id);
+            // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
+            $form.append($(input));
+            // Empty the box after select
+            $form.find('.interests-select').val("");
+            // Display the selected value
+            $form.find(".interest-list").append($('<li>').text(ui.item.label));
+            return false;
+        }
+    }
 
 });

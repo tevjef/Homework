@@ -44,7 +44,7 @@ function isAdmin($ucid) {
 function createPost($to_ucid, $from_ucid,$postText) {
     $to_profileId = getProfileId($to_ucid);
     $from_profileId = getProfileId($from_ucid);
-
+    date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
     $fields = "opcode=9&posterID={$from_profileId}&profileID={$to_profileId}&postText={$postText}&timeStamp={$timestamp}";
     $result = postToDatabase($fields);
@@ -56,8 +56,7 @@ function createPost($to_ucid, $from_ucid,$postText) {
     }
 }
 
-function selectPosts($ucid) {
-    $profileId = getProfileId($ucid);
+function selectPosts($profileId) {
     $fields = "opcode=11&profileID={$profileId}";
     $result = postToDatabase($fields);
     $posts = [];
@@ -68,6 +67,30 @@ function selectPosts($ucid) {
     return $posts;
 }
 
+function insertInterest($profileId, $interestId) {
+    $fields = "opcode=0&sql=INSERT INTO profileIntrests (search_profileID, search_intrestID) VALUES ($profileId, $interestId)
+     ON DUPLICATE KEY UPDATE search_intrestID=search_intrestID";
+    $result = postToDatabase($fields);
+    $message = $result['message'];
+    if (strpos($message, 'worked') !== FALSE) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function selectInterests($profileId) {
+    $fields = "opcode=0&sql=SELECT intrestID, intrestName FROM profileIntrests JOIN intrests ON intrests.intrestID =
+     profileIntrests.search_intrestID WHERE search_profileID = $profileId ORDER BY intrestName";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $val) {
+        array_push($arr, ['id' => $val['intrestID'], 'name' => $val['intrestName']]);
+    }
+    return $arr;
+}
+
+
 $profileCache = [];
 function getCacheProfile($profileId) {
     if (!isset($GLOBALS['profileCache'][$profileId])) {
@@ -77,19 +100,7 @@ function getCacheProfile($profileId) {
 }
 
 function selectUser($ucid) {
-    $fields = "opcode=2&ucid={$ucid}";
-    $result = postToDatabase($fields);
-
-    if (isset($result['username'])) {
-        $username = $result['username'];
-        $profileId = $result['search_profileID'];
-        $email = $result['email'];
-        $profile = selectProfile($profileId);
-
-        $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email, 'profile' => $profile];
-        return $json;
-    }
-    return null;
+    return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
 }
 
 function selectUserOptions($ucid, $options = []) {
@@ -102,11 +113,14 @@ function selectUserOptions($ucid, $options = []) {
         $email = $result['email'];
 
         $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email];
-        if ($options['profile']) {
+        if (isset($options['profile'])?$options['profile']:false) {
             $json['profile'] = selectProfile($profileId);
         }
-        if ($options['posts']) {
-            $json['profile']['posts'] = selectPosts($ucid);
+        if (isset($options['posts'])?$options['posts']:false) {
+            $json['profile']['posts'] = selectPosts($profileId);
+        }
+        if (isset($options['interests'])?$options['interests']:false) {
+            $json['profile']['interests'] = selectInterests($profileId);
         }
         return $json;
     }
@@ -165,11 +179,12 @@ function updateUser($ucid, $username, $last, $first, $password, $profileId) {
 
 }
 
-function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image) {
-    $result = selectUser($ucid);
+function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image, $interests) {
+    // Check if profile already exists
+/*    $result = selectUser($ucid);
     if (!is_null($result['profile'])) {
         return null;
-    }
+    }*/
     $profileId = initProfile($firstname, $lastname);
     $result = updateUser($ucid,"","","","",$profileId);
     if (is_null($result)) {
@@ -202,8 +217,10 @@ function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     }
     $result = postToDatabase($fields);
     $message = $result['message'];
-
     if (strpos($message, 'updated') !== FALSE) {
+        foreach ($interests as $key => $value) {
+            insertInterest($profileId, $value);
+        }
         return selectUser($ucid);
     } else {
         return null;
@@ -211,7 +228,7 @@ function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
 }
 
 
-function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image) {
+function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image, $interests) {
     $profileId = getProfileId($ucid);
     if (is_null($profileId)) {
         return null;
@@ -244,8 +261,10 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     }
     $result = postToDatabase($fields);
     $message = $result['message'];
-
     if (strpos($message, 'updated') !== FALSE) {
+        foreach ($interests as $key => $value) {
+            insertInterest($profileId, $value);
+        }
         return selectUser($ucid);
     } else {
         return null;
@@ -268,7 +287,7 @@ function selectProfile($profileId) {
     $relationship = getRelationship($result['search_relationshipID']);
     $gender = getGender($result['search_genderID']);
 
-    $json = ['first_name' => $result['firstName'],'last_name' => $result['lastName'],
+    $json = ['profile_id' => $profileId, 'first_name' => $result['firstName'],'last_name' => $result['lastName'],
         'class_level' => $grade, 'relationship' => $relationship, 'gender' => $gender, 'about' => $result['status'],
         'image' => $result['profilePicPath']];
     return $json;

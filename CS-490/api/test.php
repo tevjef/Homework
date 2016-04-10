@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <script type="text/javascript" src="main.js"></script>
 <link rel="stylesheet" href="styles.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -84,6 +85,11 @@
                 <option value="3">Other</option>
             </select> <br>
 
+            <label>Interests: </label>
+            <input class="interests-select"><br>
+            <ul class="interest-list">
+            </ul>
+
             <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br><br>
 
             <input type="submit" value="Submit">
@@ -131,6 +137,11 @@
                 <option value="3">Other</option>
             </select> <br>
 
+            <label>Interests: </label>
+            <input class="interests-select"><br>
+            <ul class="interest-list">
+            </ul>
+
             <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br><br>
 
             <input type="submit" value="Submit">
@@ -148,6 +159,7 @@
             <label>Signed in user UCID</label><input type="text" placeholder="signed_in_ucid" name="signed_in_ucid" id="input-box"><br><br>
             <input type="checkbox" name="profile" value="true" checked id="input-box">Get profile info<br>
             <input type="checkbox" name="posts" value="true" checked id="input-box">Get All Posts <br>
+            <input type="checkbox" name="interests" value="true" checked id="input-box">Get all interests<br>
             <input type="checkbox" name="groups_in" value="true" disabled="disabled" id="input-box">Get Groups In<br>
             <input type="checkbox" name="groups_own" value="true"  disabled="disabled" id="input-box">Get Groups Owned<br>
             <input type="checkbox" name="recommend_people" value="true"  disabled="disabled" id="input-box">Get Recommended People<br>
@@ -172,7 +184,7 @@
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
-            <p></p>
+            <p>ure requests</p>
         </div>
     </form>
 

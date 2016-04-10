@@ -11,14 +11,19 @@ $about = isset($_POST["about"])? $_POST["about"]:'';
 $relationship = isset($_POST["relationship"])? $_POST["relationship"]:'';
 $gender = isset($_POST["gender"])? $_POST["gender"]:'';
 $image = getUploaded();
+$interests = isset($_POST['interests'])?$_POST['interests']:[];
 
 if (empty($ucid)) {
     http_response_code(400);
     die(encode_json(['message' => "Bad Request - Must provide ucid when updating a profile.", 'error' => true]));
 }
 
+if (empty($first_name) && empty($last_name) && empty($class_level) && empty($gender) && empty($relationship) && empty($about) && empty($interests)) {
+    http_response_code(400);
+    die(encode_json(['message' => "Bad Request - Must provide values for at least one field when updating a profile.", 'error' => true]));
+}
 
-$result = updateProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, $image);
+$result = updateProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, $image, $interests);
 if (is_null($result)) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error updating profile. Is the UCID registered?", 'error' => true]));
