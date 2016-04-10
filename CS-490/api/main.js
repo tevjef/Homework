@@ -3,11 +3,13 @@ $(document).ready(function(){
     $results.text("no data");
 
     var submitAction = function(){
+        $results.text("Talking to server...");
         postRequest($(this));
         return false;
     };
 
     var submitMultipartAction = function(){
+        $results.text("Talking to server...");
         postMultipartRequest($(this));
         return false;
     };
@@ -29,7 +31,6 @@ $(document).ready(function(){
     $form_create_post.submit(submitAction);
     
     function postRequest($form) {
-        $results.text("Talking to server...");
         $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
                 $results.text(xhr.responseText)
             },'json')
@@ -42,7 +43,6 @@ $(document).ready(function(){
 
     function postMultipartRequest($form) {
         var formData = new FormData($form[0]);
-        $results.text("Talking to server...");
         $.ajax({
             url: $form.attr('action'),
             type: 'POST',
@@ -78,7 +78,6 @@ $(document).ready(function(){
 
     function onSelect($form) {
         return function( event, ui ) {
-            console.log("Inside onSelect");
             // Create a shadow input field that will be transferred to the server.
             var input = $("<input>").attr({'type':'hidden', 'name':'interests[]'}).val(ui.item.interest_id);
             // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.

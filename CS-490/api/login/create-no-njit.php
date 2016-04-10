@@ -19,7 +19,7 @@ if (strpos($response, 'loginok.html') != false || true) {
     $result = createUser($user_name, $user_pass, $email, $ucid);
     if (is_null($result)) {
         http_response_code(400);
-        die(encode_json(['message' => "The ucid already exists. Please login.", 'error' => true]));
+        die(encode_json(['message' => "The ucid or username already exists. Please login.", 'error' => true]));
     } else if (!is_null($result)) {
         http_response_code(201);
         die(encode_json(['message' => "Account created",

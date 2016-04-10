@@ -100,7 +100,7 @@ function getCacheProfile($profileId) {
 }
 
 function selectUser($ucid) {
-    return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
+    return selectUserOptions($ucid, ['profile' => true]);
 }
 
 function selectUserOptions($ucid, $options = []) {
@@ -221,7 +221,7 @@ function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
         foreach ($interests as $key => $value) {
             insertInterest($profileId, $value);
         }
-        return selectUser($ucid);
+        return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
     } else {
         return null;
     }
@@ -233,6 +233,7 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     if (is_null($profileId)) {
         return null;
     }
+
     $fields = "opcode=7&profileID={$profileId}";
     if (!empty($lastname)) {
         $lastname = addslashes($lastname);
@@ -259,16 +260,19 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
         $image = addslashes($image);
         $fields .= "&profilePicPath={$image}";
     }
-    $result = postToDatabase($fields);
-    $message = $result['message'];
-    if (strpos($message, 'updated') !== FALSE) {
-        foreach ($interests as $key => $value) {
-            insertInterest($profileId, $value);
-        }
-        return selectUser($ucid);
-    } else {
-        return null;
+    foreach ($interests as $key => $value) {
+        insertInterest($profileId, $value);
     }
+    if (!empty($first_name) || !empty($last_name) || !empty($class_level) || !empty($gender) || !empty($relationship) || !empty($about)) {
+        $result = postToDatabase($fields);
+        $message = $result['message'];
+        if (strpos($message, 'updated') !== FALSE) {
+            return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
+        } else {
+            return null;
+        }
+    }
+    return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
 }
 
 function initProfile($firstname, $lastname) {
