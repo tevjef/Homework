@@ -151,7 +151,6 @@ function getProfileId($ucid) {
 function updateUser($ucid, $username, $last, $first, $password, $profileId) {
     //ucid mandatory
     $passId = getPasswordId($ucid);
-    $password = password_hash($password, PASSWORD_DEFAULT);
     $fields = "opcode=3&ucid={$ucid}&passwordID={$passId}";
     if (!empty($username)) {
         $fields .= "&username={$username}";
@@ -163,6 +162,7 @@ function updateUser($ucid, $username, $last, $first, $password, $profileId) {
         $fields .= "&firstname={$first}";
     }
     if (!empty($password)) {
+        $password = password_hash($password, PASSWORD_DEFAULT);
         $fields .= "&password={$password}";
     }
     if (!empty($profileId)) {
@@ -326,9 +326,9 @@ function checkPassword($user, $pass){
 }
 
 function postToDatabase($fields) {
-    //var_dump($fields);
+    var_dump($fields);
     $result = postRequest('https://web.njit.edu/~maz9/DB/P2/', [], $fields);
-    //var_dump($result);
+    var_dump($result);
     return json_decode($result, true);
 }
 

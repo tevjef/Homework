@@ -47,7 +47,7 @@ $(document).ready(function(){
             url: $form.attr('action'),
             type: 'POST',
             data: formData,
-            async: false,
+            async: true,
             cache: false,
             contentType: false,
             processData: false,
