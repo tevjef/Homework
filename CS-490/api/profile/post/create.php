@@ -13,7 +13,7 @@ if (empty($to_ucid) || empty($from_ucid) || empty($postText)) {
 
 $success = createPost($to_ucid, $from_ucid, $postText);
 
-$user = selectUserOptions($to_ucid, ['profile' => true, 'posts' => true]);
+$user = selectUserOptions($to_ucid, ['posts' => true]);
 if (is_null($success)) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error creation the post. Does the profile exist?", 'error' => true]));
