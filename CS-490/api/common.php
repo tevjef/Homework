@@ -26,6 +26,42 @@ function postRequest($url, $headers, $fields) {
     }
 }
 
+function createGroup($ucid, $groupName) {
+    $profileId = getProfileId($ucid);
+    $fields = "opcode=18&groupName=$groupName&ownerID=$profileId";
+    $result = postToDatabase($fields);
+
+    $message = $result['message'];
+
+    if (strpos($message, 'Exists') !== FALSE) {
+        die(encode_json(['message' => "There was an error creation group.  $groupName already exists", 'error' => true]));
+    } else if (strpos($message, 'inserted') !== FALSE) {
+
+    }
+        var_dump($result);
+
+    return $result;
+}
+
+function updateGroup($groupId, $groupName, $ownerID) {
+    $fields = "opcode=21&groupName=$groupName&ownerID=$ownerID";
+
+    if (!empty($groupName)) {
+        $fields .= "&groupName=$groupName";
+    }
+    if (!empty($ownerID)) {
+        $fields .= "&ownerID=$ownerID";
+    }
+    $result = postToDatabase($fields);
+
+}
+
+function selectGroups($ucid) {
+    $profileId = getProfileId($ucid);
+    $fields = "opcode=20&profileID=$profileId";
+    $result = postToDatabase($fields);
+}
+
 function isAdmin($ucid) {
     $profileId = getProfileId($ucid);
     $fields = "opcode=14&table=adminprofile";
@@ -90,8 +126,6 @@ function selectInterests($profileId) {
     return $arr;
 }
 
-
-$profileCache = [];
 function getCacheProfile($profileId) {
     if (!isset($GLOBALS['profileCache'][$profileId])) {
         $GLOBALS['profileCache'][$profileId] = selectSmallProfile($profileId);
@@ -139,13 +173,25 @@ function getPasswordId($ucid) {
 }
 
 function getProfileId($ucid) {
-    $fields = "opcode=2&ucid={$ucid}";
-    $result = postToDatabase($fields);
-    $profileid = isset($result['search_profileID'])? $result['search_profileID']:'';
-    if (empty($profileid)) {
-        return null;
+    if (!isset($GLOBALS['ucidCache'][$ucid])) {
+        $fields = "opcode=2&ucid={$ucid}";
+        $result = postToDatabase($fields);
+        $profileId = isset($result['search_profileID'])? $result['search_profileID']:'';
+        if (empty($profileId)) {
+            return null;
+        }
+        $GLOBALS['ucidCache'][$ucid] =  $profileId;
     }
-    return $profileid;
+    return $GLOBALS['ucidCache'][$ucid];
+}
+
+function getUcid($profileId) {
+    $fields = "opcode=15&profileID={$profileId}";
+    $result = postToDatabase($fields);
+    if (isset($result['ucid'])) {
+        return $result['ucid'];
+    }
+    return null;
 }
 
 function updateUser($ucid, $username, $last, $first, $password, $profileId) {
@@ -301,7 +347,7 @@ function selectSmallProfile($profileId) {
     $fields = "opcode=6&profileID={$profileId}";
     $result = postToDatabase($fields);
     if (!isset($result['profileID'])) return null;
-    $json = ['first_name' => $result['firstName'],'last_name' => $result['lastName'], 'image' => $result['profilePicPath']];
+    $json = ['profile_id' => $profileId, 'ucid' => getUcid($profileId), 'first_name' => $result['firstName'],'last_name' => $result['lastName'], 'image' => $result['profilePicPath']];
     return $json;
 }
 
@@ -318,7 +364,7 @@ function createUser($user, $pass, $email, $ucid) {
 function checkPassword($user, $pass){
     $fields = "opcode=2&ucid={$user}";
     $result = postToDatabase($fields);
-    if (password_verify($pass, $result['password'])) {
+    if (isset($result['password']) && password_verify($pass, $result['password'])) {
         return true;
     } else {
         return false;
@@ -326,9 +372,9 @@ function checkPassword($user, $pass){
 }
 
 function postToDatabase($fields) {
-    var_dump($fields);
-    $result = postRequest('https://web.njit.edu/~maz9/DB/P2/', [], $fields);
-    var_dump($result);
+    //var_dump($fields);
+    $result = postRequest('https://web.njit.edu/~maz9/DB/P3/', [], $fields);
+    //var_dump($result);
     return json_decode($result, true);
 }
 

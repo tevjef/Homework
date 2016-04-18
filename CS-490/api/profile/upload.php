@@ -2,7 +2,6 @@
 
 include '../common.php';
 
-
 $target_dir = "uploads/";
 if( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
     $target_dir = $_SERVER["CONTEXT_DOCUMENT_ROOT"] . '/api/profile/uploads/';

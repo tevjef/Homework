@@ -15,7 +15,7 @@ $get_recommended_groups = isset($_POST["recommend_groups"])? true:false;
 
 if (empty($ucid) || empty($privileged_user)) {
     http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide the ucid and signed_in_ucid when retrieving and account", 'error' => true]));
+    die(encode_json(['message' => "Bad Request - Must provide the ucid and signed_in_ucid when retrieving an account", 'error' => true]));
 }
 
 if (strcmp($ucid, $privileged_user) == 0) {
