@@ -3,36 +3,35 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <script type="text/javascript" src="js/test.js"></script>
-<script type="text/javascript" src="js/common.js"></script>
 
 <link rel="stylesheet" href="css/test.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 
 <body>
 <div class="left">
-        <form id="form-create-account" action="../login/create.php" method="post">
-                <div class="form">
-                    <h3>Creating an account</h3>
-                    <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
-                    <label>UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" id="input-box">
-                    <label>Username:</label><input type="text" placeholder="user_name" name="user_name" id="input-box">
-                    <label>Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" id="input-box">
-                    <label>Email:</label><input type="email" placeholder="email" name="email" id="input-box"><br><br>
-                    <input type="submit" value="Submit">
-                </div>
-                <div class="right details">
-                    <p>Save ucid and user_pass to use to authenticate future requests</p>
-                </div>
-        </form>
+    <form id="form-create-account" action="../login/create.php" method="post">
+            <div class="form">
+                <h3>Creating an account</h3>
+                <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+                <label>UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" class="input-box">
+                <label>Username:</label><input type="text" placeholder="user_name" name="user_name" class="input-box">
+                <label>Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" class="input-box">
+                <label>Email:</label><input type="email" placeholder="email" name="email" class="input-box"><br><br>
+                <input type="submit" value="Submit">
+            </div>
+            <div class="right details">
+                <p>Save ucid and user_pass to use to authenticate future requests</p>
+            </div>
+    </form>
     
     <form id="form-create-account-no-njit" action="../login/create-no-njit.php" method="post">
         <div class="form">
             <h3>Creating an account (No NJIT Check)</h3>
-            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
-            <label>UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" id="input-box">
-            <label>Username:</label><input type="text" placeholder="user_name" name="user_name" id="input-box">
-            <label>Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" id="input-box">
-            <label>Email:</label><input type="email" placeholder="email" name="email" id="input-box"><br><br>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <label>UCID Password:</label><input type="password" placeholder="ucid_pass" name="ucid_pass" class="input-box">
+            <label>Username:</label><input type="text" placeholder="user_name" name="user_name" class="input-box">
+            <label>Create Password:</label><input type="password" placeholder="user_pass" name="user_pass" class="input-box">
+            <label>Email:</label><input type="email" placeholder="email" name="email" class="input-box"><br><br>
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
@@ -43,8 +42,8 @@
     <form id="form-login-account" action="../login/login.php" method="post">
         <div class="form">
             <h3>Login into account</h3>
-            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
-            <label>Password:</label><input type="password" placeholder="pass" name="pass" id="input-box"><br><br>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <label>Password:</label><input type="password" placeholder="pass" name="pass" class="input-box"><br><br>
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
@@ -55,15 +54,15 @@
     <form id="form-create-profile" action="../profile/create.php" method="post">
         <div class="form">
             <h3>Create a profile</h3>
-            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
-            <label>First Name:</label><input type="text" placeholder="first_name" name="first_name" id="input-box">
-            <label>Last Name:</label><input type="text" placeholder="last_name" name="last_name" id="input-box">
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <label>First Name:</label><input type="text" placeholder="first_name" name="first_name" class="input-box">
+            <label>Last Name:</label><input type="text" placeholder="last_name" name="last_name" class="input-box">
 
-            <label for="textarea"> About </label>
-            <textarea id="textarea" name="about" placeholder="about" rows="5" cols="30"></textarea>
+            <label> About </label>
+            <textarea class="textarea" name="about" placeholder="about" rows="5" cols="30"></textarea>
 
             <label for="class-select"> Class Level</label>
-            <select id="class-select" name="class_level">
+            <select class="class-select" name="class_level">
                 <option value="1">Freshman</option>
                 <option value="2">Sophomore</option>
                 <option value="3">Junior</option>
@@ -71,7 +70,7 @@
             </select>
 
             <label for="relationship-select"> Relationship Status </label>
-            <select id="relationship-select" name="relationship">
+            <select class="relationship-select" name="relationship">
                 <option value="1">Single</option>
                 <option value="2">Dating</option>
                 <option value="3">Married</option>
@@ -80,7 +79,7 @@
 
 
             <label for="gender-select"> Gender </label>
-            <select id="gender-select" name="gender">
+            <select class="gender-select" name="gender">
                 <option value="1">Male</option>
                 <option value="2">Female</option>
                 <option value="3">Other</option>
@@ -91,7 +90,7 @@
             <ul class="interest-list">
             </ul>
 
-            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br><br>
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" class="input-box"><br><br>
 
             <input type="submit" value="Submit">
         </div>
@@ -103,12 +102,12 @@
     <form id="form-update-profile" action="../profile/update.php" method="post" >
         <div class="form">
             <h3>Update a profile</h3>
-            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
-            <label>First Name:</label><input type="text" placeholder="first_name" name="first_name" id="input-box">
-            <label>Last Name:</label><input type="text" placeholder="last_name" name="last_name" id="input-box">
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <label>First Name:</label><input type="text" placeholder="first_name" name="first_name" class="input-box">
+            <label>Last Name:</label><input type="text" placeholder="last_name" name="last_name" class="input-box">
 
-            <label for="textarea"> About </label>
-            <textarea id="textarea" name="about" placeholder="about" rows="5" cols="30"></textarea>
+            <label> About </label>
+            <textarea class="textarea" name="about" placeholder="about" rows="5" cols="30"></textarea>
 
 
             <label for="class-select"> Class Level</label>
@@ -143,7 +142,7 @@
             <ul class="interest-list">
             </ul>
 
-            <label>Profile Image: </label><input type="file" placeholder="file" name="file" id="input-box"><br><br>
+            <label>Profile Image: </label><input type="file" placeholder="file" name="file" class="input-box"><br><br>
 
             <input type="submit" value="Submit">
         </div>
@@ -156,15 +155,15 @@
     <form id="form-select-profile" action="../profile/index.php" method="post" >
         <div class="form">
             <h3>Get a profile</h3>
-            <label>Profile UCID</label><input type="text" placeholder="ucid" name="ucid" id="input-box">
-            <label>Signed in user UCID</label><input type="text" placeholder="signed_in_ucid" name="signed_in_ucid" id="input-box"><br><br>
-            <input type="checkbox" name="profile" value="true" checked id="input-box">Get profile info<br>
-            <input type="checkbox" name="posts" value="true" checked id="input-box">Get All Posts <br>
-            <input type="checkbox" name="interests" value="true" checked id="input-box">Get all interests<br>
-            <input type="checkbox" name="groups_in" value="true" disabled="disabled" id="input-box">Get Groups In<br>
-            <input type="checkbox" name="groups_own" value="true"  disabled="disabled" id="input-box">Get Groups Owned<br>
-            <input type="checkbox" name="recommend_people" value="true"  disabled="disabled" id="input-box">Get Recommended People<br>
-            <input type="checkbox" name="recommend_groups" value="true"  disabled="disabled" id="input-box">Get Recommended Groups<br>
+            <label>Profile UCID</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <label>Signed in user UCID</label><input type="text" placeholder="signed_in_ucid" name="signed_in_ucid" class="input-box"><br><br>
+            <input type="checkbox" name="profile" value="true" checked class="input-box">Get profile info<br>
+            <input type="checkbox" name="posts" value="true" checked class="input-box">Get All Posts <br>
+            <input type="checkbox" name="interests" value="true" checked class="input-box">Get all interests<br>
+            <input type="checkbox" name="groups_in" value="true" disabled="disabled" class="input-box">Get Groups In<br>
+            <input type="checkbox" name="groups_own" value="true"  disabled="disabled" class="input-box">Get Groups Owned<br>
+            <input type="checkbox" name="recommend_people" value="true"  disabled="disabled" class="input-box">Get Recommended People<br>
+            <input type="checkbox" name="recommend_groups" value="true"  disabled="disabled" class="input-box">Get Recommended Groups<br>
 
             <br><input type="submit" value="Submit">
         </div>
@@ -177,15 +176,27 @@
     <form id="form-create-post" action="../profile/post/create.php" method="post" >
         <div class="form">
             <h3>Create a post</h3>
-            <label>Post to:</label><input type="text" placeholder="to_ucid" name="to_ucid" id="input-box">
-            <label>From:</label><input type="text" placeholder="from_ucid" name="from_ucid" id="input-box">
-            <label for="textarea"> About </label>
-            <textarea id="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
+            <label>Post to:</label><input type="text" placeholder="to_ucid" name="to_ucid" class="input-box">
+            <label>From:</label><input type="text" placeholder="from_ucid" name="from_ucid" class="input-box">
+            <label> About </label>
+            <textarea class="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
 
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
-            <p>ure requests</p>
+        </div>
+    </form>
+
+
+    <form id="form-create-group" action="../group/create.php" method="post" >
+        <div class="form">
+            <h3>Create a group</h3>
+            <label>Ucid: </label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <label>Group Name: </label><input type="text" placeholder="group_name" name="group_name" class="input-box"><br><br>
+
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
         </div>
     </form>
 

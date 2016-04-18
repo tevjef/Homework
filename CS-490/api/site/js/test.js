@@ -2,6 +2,7 @@ $(document).ready(function(){
     var $results = $('.output');
     $results.text("no data");
 
+
     var submitAction = function(){
         $results.text("Talking to server...");
         postRequest($(this));
@@ -14,22 +15,6 @@ $(document).ready(function(){
         return false;
     };
 
-    var $form_create_account = $('#form-create-account');
-    var $form_create_account_no_njit = $('#form-create-account-no-njit');
-    var $form_login_account = $('#form-login-account');
-    var $form_create_profile = $('#form-create-profile');
-    var $form_update_profile = $('#form-update-profile');
-    var $form_select_profile = $('#form-select-profile');
-    var $form_create_post = $('#form-create-post');
-
-    $form_create_account.submit(submitAction);
-    $form_create_account_no_njit.submit(submitAction);
-    $form_login_account.submit(submitAction);
-    $form_create_profile.submit(submitMultipartAction);
-    $form_update_profile.submit(submitMultipartAction);
-    $form_select_profile.submit(submitAction);
-    $form_create_post.submit(submitAction);
-    
     function postRequest($form) {
         $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
                 $results.text(xhr.responseText)
@@ -39,7 +24,6 @@ $(document).ready(function(){
             });
         return false
     }
-
 
     function postMultipartRequest($form) {
         var formData = new FormData($form[0]);
@@ -61,16 +45,34 @@ $(document).ready(function(){
         return false
     }
 
+    var $form_create_account = $('#form-create-account');
+    var $form_create_account_no_njit = $('#form-create-account-no-njit');
+    var $form_login_account = $('#form-login-account');
+    var $form_create_profile = $('#form-create-profile');
+    var $form_update_profile = $('#form-update-profile');
+    var $form_select_profile = $('#form-select-profile');
+    var $form_create_post = $('#form-create-post');
+    var $form_create_group = $('#form-create-group');
+
+    $form_create_account.submit(submitAction);
+    $form_create_account_no_njit.submit(submitAction);
+    $form_login_account.submit(submitAction);
+    $form_create_profile.submit(submitMultipartAction);
+    $form_update_profile.submit(submitMultipartAction);
+    $form_select_profile.submit(submitAction);
+    $form_create_post.submit(submitAction);
+    $form_create_group.submit(submitAction);
+
 
     $form_create_profile.find('.interests-select').autocomplete({
-        source: "interests.php",
+        source: "../../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelect($form_create_profile)
     });
 
     $form_update_profile.find(".interests-select").autocomplete({
-        source: "interests.php",
+        source: "../../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelect($form_update_profile)
