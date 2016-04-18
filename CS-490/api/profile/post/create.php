@@ -8,7 +8,7 @@ $postText = isset($_POST["text"])? $_POST["text"]:'';
 
 if (empty($to_ucid) || empty($from_ucid) || empty($postText)) {
     http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide the to_ucid, from_ucid, postText from when creating a post.", 'error' => true]));
+    die(encode_json(['message' => "Bad Request - Must provide the to_ucid, from_ucid, text from when creating a post.", 'error' => true]));
 }
 
 $success = createPost($to_ucid, $from_ucid, $postText);
