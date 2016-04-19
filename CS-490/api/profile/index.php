@@ -24,7 +24,7 @@ if (strcmp($ucid, $privileged_user) == 0) {
     }
 }
 
-$result = selectUserOptions($ucid, ['profile' => $get_profile, 'posts' => $get_posts, 'interests' => $get_interests]);
+$result = selectUserOptions($ucid, ['profile' => $get_profile, 'posts' => $get_posts, 'interests' => $get_interests, 'groups_own' => $get_groups_own]);
 if (is_null($result)) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error selecting profile. Is the UCID registered?", 'error' => true]));

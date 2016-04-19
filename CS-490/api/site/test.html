@@ -51,6 +51,17 @@
         </div>
     </form>
 
+    <form id="form-delete-account" action="../login/remove.php" method="post">
+        <div class="form">
+            <h3>Remove account</h3>
+            <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box"><br><br>
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+
     <form id="form-create-profile" action="../profile/create.php" method="post">
         <div class="form">
             <h3>Create a profile</h3>
@@ -160,8 +171,8 @@
             <input type="checkbox" name="profile" value="true" checked class="input-box">Get profile info<br>
             <input type="checkbox" name="posts" value="true" checked class="input-box">Get All Posts <br>
             <input type="checkbox" name="interests" value="true" checked class="input-box">Get all interests<br>
+            <input type="checkbox" name="groups_own" value="true"  checked class="input-box">Get Groups Owned<br>
             <input type="checkbox" name="groups_in" value="true" disabled="disabled" class="input-box">Get Groups In<br>
-            <input type="checkbox" name="groups_own" value="true"  disabled="disabled" class="input-box">Get Groups Owned<br>
             <input type="checkbox" name="recommend_people" value="true"  disabled="disabled" class="input-box">Get Recommended People<br>
             <input type="checkbox" name="recommend_groups" value="true"  disabled="disabled" class="input-box">Get Recommended Groups<br>
 
@@ -193,12 +204,40 @@
             <h3>Create a group</h3>
             <label>Ucid: </label><input type="text" placeholder="ucid" name="ucid" class="input-box">
             <label>Group Name: </label><input type="text" placeholder="group_name" name="group_name" class="input-box"><br><br>
+            <label>Interests: </label>
+            <input class="interests-select"><br>
+            <ul class="interest-list">
+            </ul>
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-select-group" action="../group/index.php" method="post" >
+        <div class="form">
+            <h3>Select a group</h3>
+            <label>Group ID </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-create-group-post" action="../group/post/create.php" method="post" >
+        <div class="form">
+            <h3>Create a group post</h3>
+            <label>Post to:</label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <label>From:</label><input type="text" placeholder="from_ucid" name="from_ucid" class="input-box">
+            <label> Post Content: </label>
+            <textarea class="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
 
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
         </div>
     </form>
+
 
 </div>
 <div class="results-panel">

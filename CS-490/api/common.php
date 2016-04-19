@@ -1,6 +1,6 @@
 <?php
 
-if( strpos( $_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+if( str_compare( $_SERVER['SERVER_SOFTWARE'], 'Apache')) {
     error_reporting( error_reporting() & ~E_NOTICE );
 }
 
@@ -26,25 +26,25 @@ function postRequest($url, $headers, $fields) {
     }
 }
 
-function createGroup($ucid, $groupName) {
+function createGroup($ucid, $groupName, $interests) {
     $profileId = getProfileId($ucid);
     $fields = "opcode=18&groupName=$groupName&ownerID=$profileId";
     $result = postToDatabase($fields);
 
     $message = $result['message'];
-
-    if (strpos($message, 'Exists') !== FALSE) {
+    if (str_compare($message, 'Exists')) {
         die(encode_json(['message' => "There was an error creation group.  $groupName already exists", 'error' => true]));
-    } else if (strpos($message, 'inserted') !== FALSE) {
-
+    } else if (strcmp($message, 'inserted')) {
+        $groupId = $result['groupID'];
+        if(updateGroup($groupId, $groupName, $profileId, $interests)) {
+            return selectUserOptions($ucid, ["profile" => true, "groups_own" => true]);
+        }
     }
-        var_dump($result);
-
-    return $result;
+    return null;
 }
 
-function updateGroup($groupId, $groupName, $ownerID) {
-    $fields = "opcode=21&groupName=$groupName&ownerID=$ownerID";
+function updateGroup($groupId, $groupName, $ownerID, $interests) {
+    $fields = "opcode=21&groupID=$groupId";
 
     if (!empty($groupName)) {
         $fields .= "&groupName=$groupName";
@@ -52,32 +52,83 @@ function updateGroup($groupId, $groupName, $ownerID) {
     if (!empty($ownerID)) {
         $fields .= "&ownerID=$ownerID";
     }
+    $fields .= "&intrestsIDs=". json_encode($interests);
     $result = postToDatabase($fields);
-
+    var_dump($fields);
+    var_dump($result);
+    if (str_compare($result['message'], 'updated')) {
+        return true;
+    } else {
+        die(encode_json(['message' => "There was an error creation group. Could not insert ids", 'error' => true]));
+    }
 }
 
-function selectGroups($ucid) {
-    $profileId = getProfileId($ucid);
-    $fields = "opcode=20&profileID=$profileId";
+function selectProfileGroups($profileId) {
+    $fields = "opcode=20&ownerID=$profileId";
     $result = postToDatabase($fields);
+    $groups = [];
+    foreach ($result['data'] as $value) {
+        array_push($groups, ["id" => $value['groupID'], "name" => $value['groupName']]);
+    }
+    return $groups;
+}
+
+function selectGroup($groupId) {
+    $fields = "opcode=19&groupID=$groupId";
+    $result = postToDatabase($fields);
+
+    if (!isset($result['data']['search_ownerprofileID'])) {
+        die(encode_json(['message' => "The group does not exist", 'error' => true]));
+    }
+    $ownerUcid = getUcid($result['data']['search_ownerprofileID']);
+    $interests = [];
+
+    foreach($result['data']['intrests'] as $value) {
+        array_push($interests, ['id' => $value['intrestID'], 'name' => $value['intrestName']]);
+    }
+    $group = ['id' => $groupId, 'name' => $result['data']['groupName'],
+        'ownerId' => $result['data']['search_ownerprofileID'],
+        'interests' => $interests,
+        'ownerUcid' => $ownerUcid, 'posts' => selectGroupPosts($groupId)];
+
+    return $group;
+}
+
+function createGroupPost($group_id, $from_ucid,$postText) {
+    $from_profileId = getProfileId($from_ucid);
+    date_default_timezone_set('UTC');
+    $timestamp = date('Y-m-d H:i:s',time()) ;
+    $fields = "opcode=9&posterID=$from_profileId&groupID=$group_id&postText=$postText&timeStamp=$timestamp";
+    $result = postToDatabase($fields);
+    $message = $result['message'];
+    $postId = $result['postID'];
+    var_dump($result);
+    if (str_compare($message, 'Inserted')) {
+        return true;
+    } else {
+        return null;
+    }
+}
+
+function selectGroupPosts($groupId) {
+    $fields = "opcode=11&groupID={$groupId}";
+    $result = postToDatabase($fields);
+    $posts = [];
+    foreach ($result['data'] as $item) {
+        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
+            'posted_by' => getCacheProfile($item['search_senderprofileID'])]);
+    }
+    return $posts;
 }
 
 function isAdmin($ucid) {
     $profileId = getProfileId($ucid);
-    $fields = "opcode=14&table=adminprofile";
+    $fields = "opcode=16&profileID=$profileId";
     $result = postToDatabase($fields);
-    $flag = false;
-    foreach ($result['data'] as $val) {
-        //var_dump($profileId);
-        //var_dump($val['search_profileID']);
-        if (strcmp($profileId, $val['search_profileID']) == 0) {
-            $flag = true;
-        }
-    }
-    return $flag;
+    return str_compare($result['message'], "is admin");
 }
 
-function createPost($to_ucid, $from_ucid,$postText) {
+function createProfilePost($to_ucid, $from_ucid, $postText) {
     $to_profileId = getProfileId($to_ucid);
     $from_profileId = getProfileId($from_ucid);
     date_default_timezone_set('UTC');
@@ -85,19 +136,26 @@ function createPost($to_ucid, $from_ucid,$postText) {
     $fields = "opcode=9&posterID={$from_profileId}&profileID={$to_profileId}&postText={$postText}&timeStamp={$timestamp}";
     $result = postToDatabase($fields);
     $message = $result['message'];
-    if (strpos($message, 'Inserted') !== FALSE) {
+    if (str_compare($message, 'Inserted')) {
         return true;
     } else {
         return null;
     }
 }
 
-function selectPosts($profileId) {
+function deletePost($post_id) {
+    $fields = "opcode=13&postID=$post_id";
+    $result = postToDatabase($fields);
+    return str_compare($result['message'], "Deleted");
+}
+
+
+function selectProfilePosts($profileId) {
     $fields = "opcode=11&profileID={$profileId}";
     $result = postToDatabase($fields);
     $posts = [];
     foreach ($result['data'] as $item) {
-        array_push($posts, ['postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
+        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
             'posted_by' => getCacheProfile($item['search_senderprofileID'])]);
     }
     return $posts;
@@ -108,7 +166,7 @@ function insertInterest($profileId, $interestId) {
      ON DUPLICATE KEY UPDATE search_intrestID=search_intrestID";
     $result = postToDatabase($fields);
     $message = $result['message'];
-    if (strpos($message, 'worked') !== FALSE) {
+    if (str_compare($message, 'worked')) {
         return true;
     } else {
         return false;
@@ -138,7 +196,7 @@ function selectUser($ucid) {
 }
 
 function selectUserOptions($ucid, $options = []) {
-    $fields = "opcode=2&ucid={$ucid}";
+    $fields = "opcode=2&ucid=$ucid";
     $result = postToDatabase($fields);
 
     if (isset($result['username'])) {
@@ -151,14 +209,18 @@ function selectUserOptions($ucid, $options = []) {
             $json['profile'] = selectProfile($profileId);
         }
         if (isset($options['posts'])?$options['posts']:false) {
-            $json['profile']['posts'] = selectPosts($profileId);
+            $json['profile']['posts'] = selectProfilePosts($profileId);
         }
         if (isset($options['interests'])?$options['interests']:false) {
             $json['profile']['interests'] = selectInterests($profileId);
         }
+        if (isset($options['groups_own'])?$options['groups_own']:false) {
+            $json['profile']['groups_own'] = selectProfileGroups($profileId);
+        }
         return $json;
+    } else {
+        die(encode_json(['message' => "There was an error retrieving user profile." . json_encode($result), 'error' => true]));
     }
-    return null;
 }
 
 
@@ -217,7 +279,7 @@ function updateUser($ucid, $username, $last, $first, $password, $profileId) {
 
     $result = postToDatabase($fields);
     $message = $result['message'];
-    if (strpos($message, 'updated') !== FALSE) {
+    if (str_compare($message, 'updated')) {
         return selectUser($ucid);
     } else {
         return null;
@@ -263,7 +325,7 @@ function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     }
     $result = postToDatabase($fields);
     $message = $result['message'];
-    if (strpos($message, 'updated') !== FALSE) {
+    if (str_compare($message, 'updated')) {
         foreach ($interests as $key => $value) {
             insertInterest($profileId, $value);
         }
@@ -273,6 +335,11 @@ function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     }
 }
 
+function deleteUser($ucid) {
+    $fields = "opcode=4&ucid=$ucid";
+    $result = postToDatabase($fields);
+    return str_compare($result['message'], "Deleted");
+}
 
 function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image, $interests) {
     $profileId = getProfileId($ucid);
@@ -312,7 +379,7 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     if (!empty($first_name) || !empty($last_name) || !empty($class_level) || !empty($gender) || !empty($relationship) || !empty($about)) {
         $result = postToDatabase($fields);
         $message = $result['message'];
-        if (strpos($message, 'updated') !== FALSE) {
+        if (str_compare($message, 'updated')) {
             return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
         } else {
             return null;
@@ -355,7 +422,7 @@ function createUser($user, $pass, $email, $ucid) {
     $pass = password_hash($pass, PASSWORD_DEFAULT);
     $fields = "opcode=1&username={$user}&password={$pass}&ucid={$ucid}&email={$email}";
     $result = postToDatabase($fields);
-    if (strpos(strtolower($result['message']), 'exists') !== FALSE) {
+    if (str_compare(strtolower($result['message']), 'exists')) {
         return null;
     }
     return selectUser($ucid);
@@ -459,11 +526,14 @@ function encode_json($value) {
     return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 }
 
+function str_compare($str1, $str2) {
+    return (strcmp(strtolower($str1), strtolower($str2) ) == 0);
+}
 
 function getUploaded() {
     if (!empty($_FILES["file"]["name"])) {
         $target_dir = "uploads/";
-        if (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false) {
+        if (strcmp($_SERVER['SERVER_SOFTWARE'], 'Apache')) {
             $target_dir = $_SERVER["CONTEXT_DOCUMENT_ROOT"] . '/api/profile/uploads/';
         }
         $file_name = $_SERVER['REQUEST_TIME'] * 1000 . '_' . basename($_FILES["file"]["name"]);
@@ -501,6 +571,16 @@ function getUploaded() {
         } else {
             return "";
         }
+    }
+}
+
+function checkAuth() {
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
+        die(encode_json(['message' => "Must supply authorization header. http://stackoverflow.com/a/11960692/2238427", 'error' => true]));
+    } else {
+        return checkPassword($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
     }
 }
 

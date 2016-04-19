@@ -11,7 +11,7 @@ if (empty($to_ucid) || empty($from_ucid) || empty($postText)) {
     die(encode_json(['message' => "Bad Request - Must provide the to_ucid, from_ucid, text from when creating a post.", 'error' => true]));
 }
 
-$success = createPost($to_ucid, $from_ucid, $postText);
+$success = createProfilePost($to_ucid, $from_ucid, $postText);
 
 $user = selectUserOptions($to_ucid, ['posts' => true]);
 if (is_null($success)) {

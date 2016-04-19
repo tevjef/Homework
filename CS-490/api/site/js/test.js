@@ -48,20 +48,26 @@ $(document).ready(function(){
     var $form_create_account = $('#form-create-account');
     var $form_create_account_no_njit = $('#form-create-account-no-njit');
     var $form_login_account = $('#form-login-account');
+    var $form_delete_account = $('#form-delete-account');
     var $form_create_profile = $('#form-create-profile');
     var $form_update_profile = $('#form-update-profile');
     var $form_select_profile = $('#form-select-profile');
     var $form_create_post = $('#form-create-post');
+    var $form_select_group = $('#form-select-group');
     var $form_create_group = $('#form-create-group');
+    var $form_create_group_post = $('#form-create-group-post');
 
     $form_create_account.submit(submitAction);
     $form_create_account_no_njit.submit(submitAction);
     $form_login_account.submit(submitAction);
+    $form_delete_account.submit(submitAction);
     $form_create_profile.submit(submitMultipartAction);
     $form_update_profile.submit(submitMultipartAction);
     $form_select_profile.submit(submitAction);
     $form_create_post.submit(submitAction);
+    $form_select_group.submit(submitAction);
     $form_create_group.submit(submitAction);
+    $form_create_group_post.submit(submitAction);
 
 
     $form_create_profile.find('.interests-select').autocomplete({
@@ -76,6 +82,13 @@ $(document).ready(function(){
         minLength: 2,
         // When option is selected
         select: onSelect($form_update_profile)
+    });
+
+    $form_create_group.find(".interests-select").autocomplete({
+        source: "../../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelect($form_create_group)
     });
 
     function onSelect($form) {
