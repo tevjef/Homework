@@ -8,12 +8,12 @@ $(document).ready(function(){
 
     $form_login_account.submit(function() {
         var $form = $(this);
-        $.post('../../login/login.php', $form.serialize(), function(response, status, xhr){
+        $.post('../../../login/login.php', $form.serialize(), function(response, status, xhr){
             console.log(response.account.ucid);
             start_session(response.account.ucid);
             getSession();
-            //end_session();
-                $results.text(response.message);
+            end_session();
+                window.location.href = 'profile.html';
             },'json')
             .fail(function(xhr, textStatus, errorThrown) {
                 $results.text(xhr.responseText)
@@ -23,7 +23,7 @@ $(document).ready(function(){
 
     function start_session(ucid) {
         console.log("-->Starting Session");
-        $.post('../../session/login.php', 'ucid='+ucid, function(response, status, xhr){
+        $.post('login.php', 'ucid='+ucid, function(response, status, xhr){
                 console.log(response.message);
             },'json')
             .fail(function(xhr, textStatus, errorThrown) {
@@ -33,7 +33,7 @@ $(document).ready(function(){
 
     function getSession() {
         console.log("-->Getting Session");
-        $.get('../../session/getlogin.php', "", function(response, status, xhr){
+        $.get('getlogin.php', "", function(response, status, xhr){
                 console.log(response.message);
             },'json')
             .fail(function(xhr, textStatus, errorThrown) {
@@ -43,7 +43,7 @@ $(document).ready(function(){
 
     function end_session() {
         console.log("-->Ending Session");
-        $.post('../../session/logout.php', "", function(response, status, xhr){
+        $.post('logout.php', "", function(response, status, xhr){
                 console.log(response.message);
             },'json')
             .fail(function(xhr, textStatus, errorThrown) {
