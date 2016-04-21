@@ -45,7 +45,7 @@ public class CannonGameFragment extends Fragment
       cannonView.stopGame(); // terminates the game
    } 
    
-   // when MainActivity is paused, CannonGameFragment releases resources
+   // when MainActivity is destroyed, CannonGameFragment releases resources
    @Override
    public void onDestroy()
    {
