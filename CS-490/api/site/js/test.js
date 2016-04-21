@@ -49,13 +49,23 @@ $(document).ready(function(){
     var $form_create_account_no_njit = $('#form-create-account-no-njit');
     var $form_login_account = $('#form-login-account');
     var $form_delete_account = $('#form-delete-account');
+
     var $form_create_profile = $('#form-create-profile');
     var $form_update_profile = $('#form-update-profile');
     var $form_select_profile = $('#form-select-profile');
     var $form_create_post = $('#form-create-post');
+
     var $form_select_group = $('#form-select-group');
+    var $form_search_group_name = $('#form-search-group-name');
+    var $form_search_group_interest = $('#form-search-group-interest');
+    var $form_list_group = $('#form-list-group');
+
     var $form_create_group = $('#form-create-group');
     var $form_create_group_post = $('#form-create-group-post');
+
+    var $form_create_review = $('#form-create-review');
+    var $form_select_review = $('#form-select-review');
+    var $form_select_student_review = $('#form-select-student-review');
 
     $form_create_account.submit(submitAction);
     $form_create_account_no_njit.submit(submitAction);
@@ -65,33 +75,69 @@ $(document).ready(function(){
     $form_update_profile.submit(submitMultipartAction);
     $form_select_profile.submit(submitAction);
     $form_create_post.submit(submitAction);
+
     $form_select_group.submit(submitAction);
+    $form_search_group_name.submit(submitAction);
+    $form_search_group_interest.submit(submitAction);
+
     $form_create_group.submit(submitAction);
     $form_create_group_post.submit(submitAction);
+    $form_list_group.submit(submitAction);
 
+    $form_create_review.submit(submitAction);
+    $form_select_review.submit(submitAction);
+    $form_select_student_review.submit(submitAction);
 
     $form_create_profile.find('.interests-select').autocomplete({
         source: "../../interests.php",
         minLength: 2,
         // When option is selected
-        select: onSelect($form_create_profile)
+        select: onSelectInterest($form_create_profile)
     });
 
     $form_update_profile.find(".interests-select").autocomplete({
         source: "../../interests.php",
         minLength: 2,
         // When option is selected
-        select: onSelect($form_update_profile)
+        select: onSelectInterest($form_update_profile)
     });
 
     $form_create_group.find(".interests-select").autocomplete({
         source: "../../interests.php",
         minLength: 2,
         // When option is selected
-        select: onSelect($form_create_group)
+        select: onSelectInterest($form_create_group)
     });
 
-    function onSelect($form) {
+    $form_search_group_interest.find(".interests-select").autocomplete({
+        source: "../../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectSingleInterest($form_search_group_interest)
+    });
+
+    $form_create_review.find(".class-select").autocomplete({
+        source: "../../classes.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectClass($form_create_review)
+    });
+
+    $form_create_review.find(".professor-select").autocomplete({
+        source: "../../professors.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectProfessor($form_create_review)
+    });
+
+    $form_select_review.find(".professor-select").autocomplete({
+        source: "../../professors.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectProfessor($form_select_review)
+    });
+
+    function onSelectInterest($form) {
         return function( event, ui ) {
             // Create a shadow input field that will be transferred to the server.
             var input = $("<input>").attr({'type':'hidden', 'name':'interests[]'}).val(ui.item.interest_id);
@@ -105,4 +151,45 @@ $(document).ready(function(){
         }
     }
 
+    function onSelectSingleInterest($form) {
+        return function( event, ui ) {
+            // Create a shadow input field that will be transferred to the server.
+            var input = $("<input>").attr({'type':'hidden', 'name':'interest'}).val(ui.item.interest_id);
+            // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
+            $form.append($(input));
+            // Empty the box after select
+           /* $form.find('.interests-select').val("");
+            // Display the selected value
+            $form.find(".interest-list").append($('<li>').text(ui.item.label));*/
+            return false;
+        }
+    }
+
+    function onSelectProfessor($form) {
+        return function( event, ui ) {
+            // Create a shadow input field that will be transferred to the server.
+            var input = $("<input>").attr({'type':'hidden', 'name':'professor_id'}).val(ui.item.professor_id);
+            // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
+            $form.append($(input));
+            // Empty the box after select
+            /*        $form.find('.class-select').val("");
+             // Display the selected value
+             $form.find(".class-list").append($('<li>').text(ui.item.label));*/
+            return false;
+        }
+    }
+
+    function onSelectClass($form) {
+        return function( event, ui ) {
+            // Create a shadow input field that will be transferred to the server.
+            var input = $("<input>").attr({'type':'hidden', 'name':'class_id'}).val(ui.item.class_id);
+            // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
+            $form.append($(input));
+            // Empty the box after select
+    /*        $form.find('.class-select').val("");
+            // Display the selected value
+            $form.find(".class-list").append($('<li>').text(ui.item.label));*/
+            return false;
+        }
+    }
 });

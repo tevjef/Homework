@@ -9,7 +9,7 @@ if (empty($group_id)) {
 }
 
 
-$result = selectGroup($group_id);
+$result = selectGroup($group_id, ['posts' => true, 'interests' => true]);
 if (is_null($result)) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error selecting profile. Is the UCID registered?", 'error' => true]));

@@ -1,5 +1,4 @@
 <?php
-include '../../../common.php';
 session_start();
 
 $ucid  = isset($_POST['ucid'])?$_POST['ucid']:'';

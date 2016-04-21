@@ -26,6 +26,69 @@ function postRequest($url, $headers, $fields) {
     }
 }
 
+function createReview($ucid, $class_id, $professor_id, $rating, $text) {
+    date_default_timezone_set('UTC');
+    $timestamp = date('Y-m-d H:i:s',time()) ;
+    $profileId = getProfileId($ucid);
+    $fields = "opcode=26&professorID=$professor_id&studentID=$profileId&classID=$class_id&timegiven=$timestamp&reviewgrade=$rating&reviewtext=$text";
+    $result = postToDatabase($fields);
+
+    $message = $result['message'];
+    if (!str_compare($message, "created review")) {
+        die(encode_json(['message' => "There was an error creation review." .$message, 'error' => true]));
+    } else {
+        return selectProfessorReviews($professor_id);
+    }
+}
+//SELECT reviewText FROM reviews WHERE reviewID = 11
+
+function selectProfessorReviews($professor_id) {
+    $fields = "opcode=24&professorID=$professor_id";
+    $result = postToDatabase($fields);
+
+    $name = selectProfessorName($professor_id);
+    if (count($result['message']['data']) == 0) {
+        die(encode_json(['message' => "This professor does not exist.", 'error' => true]));
+    } else {
+        $average = $result['globalaverage']['grade'];
+        $reviews = selectReviews($professor_id);
+        $review = ['id' => $professor_id, 'name' => $name, 'average' => $average, 'reviews' => $reviews];
+        return $review;
+    }
+}
+
+function selectReviews($professor_id) {
+    $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
+    classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
+    WHERE search_professorID=$professor_id ORDER BY timegiven DESC";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['id' => $value['reviewID'], 'class' => $value['className'], 'time' => $value['Timegiven'], 'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText'], 'time' => $value['Timegiven'] ]);
+    }
+    return $arr;
+}
+
+function selectStudentReviews($profile_id) {
+    $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
+    classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
+    WHERE search_studentprofileID=$profile_id ORDER BY timegiven DESC";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['id' => $value['reviewID'], 'name' => $value['professorName'], 'class' => $value['className'], 'time' => $value['Timegiven'], 'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText'], 'time' => $value['Timegiven'] ]);
+    }
+    return $arr;
+}
+
+
+function selectProfessorName($professor_id) {
+    $fields = "opcode=0&sql=SELECT professorName FROM professors WHERE professorID=$professor_id";
+    $result = postToDatabase($fields);
+    return $result['data'][0]['professorName'];
+}
+
+
 function createGroup($ucid, $groupName, $interests) {
     $profileId = getProfileId($ucid);
     $fields = "opcode=18&groupName=$groupName&ownerID=$profileId";
@@ -43,6 +106,28 @@ function createGroup($ucid, $groupName, $interests) {
     return null;
 }
 
+function searchGroupsByName($keyword) {
+    /*SELECT * FROM groups WHERE groupName LIKE '%%'*/
+    $fields = "opcode=0&sql=SELECT * FROM groups WHERE groupName LIKE '%$keyword%'";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['id' => $value['groupID'], 'name' => $value['groupName']]);
+    }
+    return $arr;
+}
+
+function searchGroupsByInterest($interest_id) {
+    $fields = "opcode=0&sql=SELECT groups.* FROM groups JOIN groupsIntrests ON groupID = search_groupID JOIN
+    intrests ON intrestID = search_intrestID WHERE intrestID = $interest_id";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['id' => $value['groupID'], 'name' => $value['groupName']]);
+    }
+    return $arr;
+}
+
 function updateGroup($groupId, $groupName, $ownerID, $interests) {
     $fields = "opcode=21&groupID=$groupId";
 
@@ -54,8 +139,7 @@ function updateGroup($groupId, $groupName, $ownerID, $interests) {
     }
     $fields .= "&intrestsIDs=". json_encode($interests);
     $result = postToDatabase($fields);
-    var_dump($fields);
-    var_dump($result);
+
     if (str_compare($result['message'], 'updated')) {
         return true;
     } else {
@@ -73,7 +157,7 @@ function selectProfileGroups($profileId) {
     return $groups;
 }
 
-function selectGroup($groupId) {
+function selectGroup($groupId, $options = []) {
     $fields = "opcode=19&groupID=$groupId";
     $result = postToDatabase($fields);
 
@@ -81,15 +165,26 @@ function selectGroup($groupId) {
         die(encode_json(['message' => "The group does not exist", 'error' => true]));
     }
     $ownerUcid = getUcid($result['data']['search_ownerprofileID']);
-    $interests = [];
 
-    foreach($result['data']['intrests'] as $value) {
-        array_push($interests, ['id' => $value['intrestID'], 'name' => $value['intrestName']]);
-    }
+
     $group = ['id' => $groupId, 'name' => $result['data']['groupName'],
         'ownerId' => $result['data']['search_ownerprofileID'],
-        'interests' => $interests,
-        'ownerUcid' => $ownerUcid, 'posts' => selectGroupPosts($groupId)];
+        'ownerUcid' => $ownerUcid,];
+
+    if (isset($options['posts'])?$options['profile']:false) {
+        $group['posts'] = selectGroupPosts($groupId);
+    }
+    if (isset($options['interests'])?$options['interests']:false) {
+        $interests = [];
+
+        foreach($result['data']['intrests'] as $value) {
+            array_push($interests, ['id' => $value['intrestID'], 'name' => $value['intrestName']]);
+        }
+        $group['interests'] = $interests;
+    }
+
+
+
 
     return $group;
 }
@@ -216,6 +311,9 @@ function selectUserOptions($ucid, $options = []) {
         }
         if (isset($options['groups_own'])?$options['groups_own']:false) {
             $json['profile']['groups_own'] = selectProfileGroups($profileId);
+        }
+        if (isset($options['reviews'])?$options['reviews']:false) {
+            $json['reviews'] = selectStudentReviews($profileId);
         }
         return $json;
     } else {
@@ -580,7 +678,9 @@ function checkAuth() {
         header('HTTP/1.0 401 Unauthorized');
         die(encode_json(['message' => "Must supply authorization header. http://stackoverflow.com/a/11960692/2238427", 'error' => true]));
     } else {
-        return checkPassword($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+        if (!checkPassword($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
+            die(encode_json(['message' => "UCID or Password is incorrect", 'error' => true]));
+        }
     }
 }
 
