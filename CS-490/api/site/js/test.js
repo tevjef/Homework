@@ -66,6 +66,9 @@ $(document).ready(function(){
     var $form_create_review = $('#form-create-review');
     var $form_select_review = $('#form-select-review');
     var $form_select_student_review = $('#form-select-student-review');
+    var $form_delete_student_review = $('#form-delete-student-review');
+
+
 
     $form_create_account.submit(submitAction);
     $form_create_account_no_njit.submit(submitAction);
@@ -86,7 +89,9 @@ $(document).ready(function(){
 
     $form_create_review.submit(submitAction);
     $form_select_review.submit(submitAction);
+
     $form_select_student_review.submit(submitAction);
+    $form_delete_student_review.submit(submitAction);
 
     $form_create_profile.find('.interests-select').autocomplete({
         source: "../../interests.php",
@@ -157,10 +162,6 @@ $(document).ready(function(){
             var input = $("<input>").attr({'type':'hidden', 'name':'interest'}).val(ui.item.interest_id);
             // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
             $form.append($(input));
-            // Empty the box after select
-           /* $form.find('.interests-select').val("");
-            // Display the selected value
-            $form.find(".interest-list").append($('<li>').text(ui.item.label));*/
             return false;
         }
     }
@@ -171,10 +172,6 @@ $(document).ready(function(){
             var input = $("<input>").attr({'type':'hidden', 'name':'professor_id'}).val(ui.item.professor_id);
             // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
             $form.append($(input));
-            // Empty the box after select
-            /*        $form.find('.class-select').val("");
-             // Display the selected value
-             $form.find(".class-list").append($('<li>').text(ui.item.label));*/
             return false;
         }
     }
@@ -185,10 +182,6 @@ $(document).ready(function(){
             var input = $("<input>").attr({'type':'hidden', 'name':'class_id'}).val(ui.item.class_id);
             // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
             $form.append($(input));
-            // Empty the box after select
-    /*        $form.find('.class-select').val("");
-            // Display the selected value
-            $form.find(".class-list").append($('<li>').text(ui.item.label));*/
             return false;
         }
     }

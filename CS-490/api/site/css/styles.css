@@ -1,0 +1,97 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+h6 {
+    font-size: 12px;
+    color: #919191;
+}
+
+textarea {
+    padding: 0;
+    height: 30px;
+    position: relative;
+    left: 0;
+    outline: none;
+    border: 1px solid #cdcdcd;
+    border-color: rgba(0,0,0,.15);
+    background-color: white;
+    font-size: 16px;
+}
+
+span {
+    font-size: 12px;
+    color: #919191;
+}
+
+#posts-wrapper {
+    width: 500px;
+    margin: 0 auto;
+}
+
+#posts-wrapper h2 {
+    margin: 0;
+}
+
+#posts-wrapper h6 {
+    margin: 0;
+}
+
+.post {
+    padding: 2%;
+}
+.post-body {
+}
+
+.post-body p {
+    font-size: 12px;
+    color: #1a1a1b;
+}
+
+.post-header {
+    height: 60px;
+    width: 100%;
+}
+
+.post-header img {
+    border-radius: 5px;
+    position: relative;
+    float: left;
+    top: 0;
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+}
+
+.post-header .right {
+    margin-left: 10px;
+    float: left;
+    display: inline-block;
+    height: 60px;
+}
+
+.post-header .right a {
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.post-header .right a:visited {
+    text-decoration: none;
+}
+
+.post-header .right span {
+    font-size: 12px;
+    color: #919191;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.post{
+    background: #FEFEFE;
+}
+
+.post:hover{
+    background: #FFF;
+}

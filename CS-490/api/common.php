@@ -26,6 +26,57 @@ function postRequest($url, $headers, $fields) {
     }
 }
 
+
+function getRecommendedPeople($ucid) {
+    $profileId = getProfileId($ucid);
+    $interests = selectUserOptions($ucid, ['interests' => true])['profile']['interests'];
+
+    $ids = [];
+    $reasons = [];
+    foreach ($interests as $item) {
+       array_push($reasons, $item['name']);
+        $sim = selectSimilarPeople($profileId, $item['id']);
+        $ids = array_merge($ids, $sim);
+    }
+    $ids = array_unique($ids);
+    $ids = array_filter($ids, function ($var) use ($profileId) { return ($var != $profileId); });
+
+    $profiles = [];
+    foreach ($ids as $id) {
+        $thisUcid = getUcid($id);
+        if (!is_null($thisUcid)) {
+            array_push($profiles, selectUserOptions($thisUcid, []));
+        }
+    }
+    return ["reason" => $reasons, 'people' => $profiles];
+}
+
+function selectSimilarPeople($profile_id, $interest_id){
+    $fields = "opcode=0&sql=SELECT profileID FROM profiles JOIN profileIntrests ON
+  profiles.profileID = profileIntrests.search_profileID
+  JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
+ WHERE intrestID = $interest_id AND profileID <> $profile_id LIMIT 5";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, $value['profileID']);
+    }
+    return $arr;
+}
+
+function selectSimilarGroups($group_id, $interest_id){
+    $fields = "opcode=0&sql=SELECT groupID, groupName, intrestName FROM groups
+    JOIN groupsIntrests ON groups.groupID = groupsIntrests.search_groupID
+    JOIN intrests ON intrests.intrestID = groupsIntrests.search_intrestID
+    WHERE intrestID = $interest_id; LIMIT 5";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, [$value['groupID']]);
+    }
+    return $arr;
+}
+
 function createReview($ucid, $class_id, $professor_id, $rating, $text) {
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
@@ -55,6 +106,12 @@ function selectProfessorReviews($professor_id) {
         $review = ['id' => $professor_id, 'name' => $name, 'average' => $average, 'reviews' => $reviews];
         return $review;
     }
+}
+
+function removeReviews($review_id) {
+    $fields = "opcode=0&sql=DELETE FROM reviews WHERE reviewID = $review_id";
+    $result = postToDatabase($fields);
+    return ['result' => $result];
 }
 
 function selectReviews($professor_id) {
@@ -171,7 +228,7 @@ function selectGroup($groupId, $options = []) {
         'ownerId' => $result['data']['search_ownerprofileID'],
         'ownerUcid' => $ownerUcid,];
 
-    if (isset($options['posts'])?$options['profile']:false) {
+    if (isset($options['posts'])?$options['posts']:false) {
         $group['posts'] = selectGroupPosts($groupId);
     }
     if (isset($options['interests'])?$options['interests']:false) {
@@ -182,10 +239,6 @@ function selectGroup($groupId, $options = []) {
         }
         $group['interests'] = $interests;
     }
-
-
-
-
     return $group;
 }
 
@@ -197,7 +250,6 @@ function createGroupPost($group_id, $from_ucid,$postText) {
     $result = postToDatabase($fields);
     $message = $result['message'];
     $postId = $result['postID'];
-    var_dump($result);
     if (str_compare($message, 'Inserted')) {
         return true;
     } else {
@@ -314,6 +366,9 @@ function selectUserOptions($ucid, $options = []) {
         }
         if (isset($options['reviews'])?$options['reviews']:false) {
             $json['reviews'] = selectStudentReviews($profileId);
+        }
+        if (isset($options['recommend_people'])?$options['recommend_people']:false) {
+            $json['profile']['recommend_people'] = getRecommendedPeople($ucid);
         }
         return $json;
     } else {
@@ -474,7 +529,8 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
     foreach ($interests as $key => $value) {
         insertInterest($profileId, $value);
     }
-    if (!empty($first_name) || !empty($last_name) || !empty($class_level) || !empty($gender) || !empty($relationship) || !empty($about)) {
+
+    if (!empty($firstname) || !empty($lastname) || !empty($classId) || !empty($genderId) || !empty($relationshipId) || !empty($status)) {
         $result = postToDatabase($fields);
         $message = $result['message'];
         if (str_compare($message, 'updated')) {
@@ -484,6 +540,7 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
         }
     }
     return selectUserOptions($ucid, ['profile' => true, 'interests' => true]);
+
 }
 
 function initProfile($firstname, $lastname) {

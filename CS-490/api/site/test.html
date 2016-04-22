@@ -173,9 +173,7 @@
             <input type="checkbox" name="interests" value="true" checked class="input-box">Get all interests<br>
             <input type="checkbox" name="reviews" value="true" checked class="input-box">Get reviews made<br>
             <input type="checkbox" name="groups_own" value="true"  checked class="input-box">Get Groups Owned<br>
-            <input type="checkbox" name="groups_in" value="true" disabled="disabled" class="input-box">Get Groups In<br>
-            <input type="checkbox" name="recommend_people" value="true"  disabled="disabled" class="input-box">Get Recommended People<br>
-            <input type="checkbox" name="recommend_groups" value="true"  disabled="disabled" class="input-box">Get Recommended Groups<br>
+            <input type="checkbox" name="recommend_people" value="true"  checked class="input-box">Get Recommended People<br>
 
             <br><input type="submit" value="Submit">
         </div>
@@ -225,6 +223,20 @@
         </div>
     </form>
 
+    <form id="form-create-group-post" action="../group/post/create.php" method="post" >
+        <div class="form">
+            <h3>Create a group post</h3>
+            <label>Post to:</label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <label>From:</label><input type="text" placeholder="from_ucid" name="from_ucid" class="input-box">
+            <label> Post Content: </label>
+            <textarea class="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
+
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
     <form id="form-search-group-name" action="../group/search.php" method="post" >
         <div class="form">
             <h3>Search groups by name</h3>
@@ -252,20 +264,6 @@
     <form id="form-list-group" action="../group/search.php" method="post" >
         <div class="form">
             <h3>List all groups</h3>
-            <input type="submit" value="Submit">
-        </div>
-        <div class="right details">
-        </div>
-    </form>
-
-    <form id="form-create-group-post" action="../group/post/create.php" method="post" >
-        <div class="form">
-            <h3>Create a group post</h3>
-            <label>Post to:</label><input type="text" placeholder="group_id" name="group_id" class="input-box">
-            <label>From:</label><input type="text" placeholder="from_ucid" name="from_ucid" class="input-box">
-            <label> Post Content: </label>
-            <textarea class="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
-
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
@@ -329,6 +327,16 @@
         <div class="form">
             <h3>Select reviews made by ucid</h3>
             <label>UCID:</label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <br><br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-delete-student-review" action="../review/remove.php" method="post" >
+        <div class="form">
+            <h3>Delete review</h3>
+            <label>UCID:</label><input type="text" placeholder="review_id" name="review_id" class="input-box">
             <br><br><input type="submit" value="Submit">
         </div>
         <div class="right details">

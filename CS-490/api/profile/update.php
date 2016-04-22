@@ -18,10 +18,6 @@ if (empty($ucid)) {
     die(encode_json(['message' => "Bad Request - Must provide ucid when updating a profile.", 'error' => true]));
 }
 
-if (empty($first_name) && empty($last_name) && empty($class_level) && empty($gender) && empty($relationship) && empty($about) && empty($interests)) {
-    http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide values for at least one field when updating a profile.", 'error' => true]));
-}
 
 $result = updateProfile($ucid, $first_name, $last_name, $relationship, $class_level, $gender, $about, $image, $interests);
 if (is_null($result)) {

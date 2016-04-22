@@ -13,11 +13,11 @@ if (empty($group_id) || empty($from_ucid) || empty($postText)) {
 
 $success = createGroupPost($group_id, $from_ucid, $postText);
 
-$user = selectUserOptions($from_ucid, ['posts' => true]);
+$user = selectGroup($group_id, ['posts' => true, 'interests' => true]);
 if (is_null($success)) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error creation the post. Does the profile and group exist?", 'error' => true]));
 } else {
     http_response_code(200);
-    die(encode_json(['message' => $user, 'error' => false]));
+    die(encode_json(['group' => $user, 'error' => false]));
 }
