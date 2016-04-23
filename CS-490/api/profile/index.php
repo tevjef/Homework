@@ -20,6 +20,7 @@ if (empty($ucid) || empty($privileged_user)) {
     die(encode_json(['message' => "Bad Request - Must provide the ucid and signed_in_ucid when retrieving an account", 'error' => true]));
 }
 
+$is_owner = true;
 if (strcmp($ucid, $privileged_user) == 0) {
     if (isAdmin($ucid)) {
         $is_owner = true;
