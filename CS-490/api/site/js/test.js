@@ -54,6 +54,7 @@ $(document).ready(function(){
     var $form_update_profile = $('#form-update-profile');
     var $form_select_profile = $('#form-select-profile');
     var $form_create_post = $('#form-create-post');
+    var $form_remove_post = $('#form-remove-post');
 
     var $form_select_group = $('#form-select-group');
     var $form_search_group_name = $('#form-search-group-name');
@@ -78,6 +79,7 @@ $(document).ready(function(){
     $form_update_profile.submit(submitMultipartAction);
     $form_select_profile.submit(submitAction);
     $form_create_post.submit(submitAction);
+    $form_remove_post.submit(submitAction);
 
     $form_select_group.submit(submitAction);
     $form_search_group_name.submit(submitAction);
