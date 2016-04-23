@@ -7,6 +7,9 @@ label {
     display: block;
 }
 
+h4 {
+    margin: 0;
+}
 
 .left {
     position: relative;

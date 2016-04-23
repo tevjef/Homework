@@ -86,7 +86,7 @@ function createReview($ucid, $class_id, $professor_id, $rating, $text) {
 
     $message = $result['message'];
     if (!str_compare($message, "created review")) {
-        die(encode_json(['message' => "There was an error creation review." .$message, 'error' => true]));
+        die(encode_json(['message' => "There was an error creation review. Does the user or professor exists?", 'error' => true]));
     } else {
         return selectProfessorReviews($professor_id);
     }
@@ -157,7 +157,7 @@ function createGroup($ucid, $groupName, $interests) {
     } else if (strcmp($message, 'inserted')) {
         $groupId = $result['groupID'];
         if(updateGroup($groupId, $groupName, $profileId, $interests)) {
-            return selectUserOptions($ucid, ["profile" => true, "groups_own" => true]);
+            return selectUserOptions($ucid, ["groups_own" => true]);
         }
     }
     return null;
