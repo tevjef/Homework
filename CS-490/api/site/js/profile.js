@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
     var ucid;
     var pass;
 
@@ -14,6 +15,32 @@ $(document).ready(function(){
             LoadProfile(ucid);
         }
     });
+
+    var $form_create_post = $('#form-create-post');
+    $form_create_post.submit(function(){
+        postRequest($(this), function(response) {
+            if (!response.error) {
+                window.location.reload(false);
+            } else {
+                alert(response.message);
+            }
+        });
+        return false;
+    });
+
+    var to_ucid;
+    var from_ucid = ucid;
+    if (qs['id'] != null) {
+        to_ucid = qs['id'];
+    } else {
+        to_ucid = ucid;
+    }
+
+    var to = $("<input>").attr({'type':'hidden', 'name':'to_ucid'}).val(to_ucid);
+    var from = $("<input>").attr({'type':'hidden', 'name':'from_ucid'}).val(from_ucid);
+    $form_create_post.append(to);
+    $form_create_post.append(from);
+
     function LoadProfile(ucid) {
         console.log("Load ucid " + ucid);
         GetProfile(ucid, function(response) {
@@ -45,32 +72,31 @@ $(document).ready(function(){
                 $(".profile-info .interests").append(document.createTextNode(profile.interests[i].name + ", "));
             }
 
-            for (var i in profile.posts) {
-                console.log(profile.posts[i]);
-               MakePost(profile.posts[i])
+            for (var j in profile.posts) {
+                console.log(profile.posts[j]);
+                MakePost(profile.posts[j])
             }
 
         });
     }
 
     function MakePost(postData) {
-        var $post = $("<div></div>").load("elements/post.html");
+        var postId ='post-' + postData.id;
+        var postDiv = '<div id="' + postId + '"></div>';
+        var $post = $(postDiv).load("elements/post.html", function (content, status, xhr) {
+            $("#" + postId + " .post-header img").attr("src", postData.posted_by.image);
+            $("#" + postId + " .profile-link").attr("href", "profile.html?id="+postData.posted_by.ucid)
+                .text(postData.posted_by.first_name + " " + postData.posted_by.first_name);
+            $("#" + postId + " .date").text(postData.timeStamp);
 
-        console.log(JSON.stringify($post));
-        console.log(JSON.stringify($post.find(".post-header img")));
-        console.log(JSON.stringify($post.find(".profile-link")));
+            $("#" + postId + " .post-body p").text(postData.postText);
 
-        $($post).find(".post-header img").attr("src", postData.posted_by.image);
-        $($post).find(".profile-link").attr("href", "profile.html?id="+postData.posted_by.ucid)
-            .text(postData.posted_by.first_name + " " + postData.posted_by.first_name);
-        $($post).find(".date").text(postData.timeStamp);
-
-        $($post).find(".post-body").text(postData.postText);
-
+        });
         $(".posts .utility-box").append($post);
 
-        return $post
+        // Does not work
 
+        // console.log(JSON.stringify(postDiv));
     }
 
     function GetProfile(ucid, callback) {
@@ -83,11 +109,11 @@ $(document).ready(function(){
             async: false
         }).responseText));
 
-       /* $.post('../profile/index.php', 'ucid='+ucid+'&signed_in_ucid='+ucid+'&profile=true', function(response, status, xhr){
-                callback(JSON.parse(xhr.responseText));
-            },'text')
-            .fail(function(xhr, textStatus, errorThrown) {
-                callback(JSON.parse(xhr.responseText));
-            });*/
+        /* $.post('../profile/index.php', 'ucid='+ucid+'&signed_in_ucid='+ucid+'&profile=true', function(response, status, xhr){
+         callback(JSON.parse(xhr.responseText));
+         },'text')
+         .fail(function(xhr, textStatus, errorThrown) {
+         callback(JSON.parse(xhr.responseText));
+         });*/
     }
 });

@@ -5,7 +5,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <script type="text/javascript" src="js/profile.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
-
+<script>
+    getSession(function(response) {
+        if(response.error) {
+            window.location.href = "login.html";
+        }
+    });
+</script>
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
@@ -68,7 +74,7 @@
         <div class="content-middle">
             <div class="utility-box">
                 <div class="make-post">
-                    <form>
+                    <form id="form-create-post" action="../profile/post/create.php" method="post">
                         <textarea class="post-input" name="text" placeholder="How are you feeling today?"></textarea><br>
                         <input type="submit" value="Submit">
                     </form>

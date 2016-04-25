@@ -35,6 +35,15 @@ var qs = (function(a) {
     return b;
 })(window.location.search.substr(1).split('&'));
 
+var submitAction = function(){
+    postRequest($(this));
+    return false;
+};
+
+var submitMultipartAction = function(){
+    postMultipartRequest($(this));
+    return false;
+};
 
 function postRequest($form, $callback) {
     $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
@@ -87,6 +96,7 @@ function getSession(callback) {
         contentType: false,
         processData: false,
         success: function(response, status, xhr){
+            console.log(JSON.parse(xhr.responseText));
             callback(JSON.parse(xhr.responseText))
         },
         error : function(xhr, textStatus, errorThrown) {
@@ -95,12 +105,20 @@ function getSession(callback) {
     });
 }
 
-function end_session() {
+function end_session(callback) {
     console.log("-->Ending Session");
-    $.post('php/logout.php', "", function(response, status, xhr){
-            console.log(response);
-        },'json')
-        .fail(function(xhr, textStatus, errorThrown) {
-            console.log(xhr.responseText);
-        });
+    $.ajax({
+        url: 'php/logout.php',
+        type: 'GET',
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(response, status, xhr){
+            callback(JSON.parse(xhr.responseText))
+        },
+        error : function(xhr, textStatus, errorThrown) {
+            callback(JSON.parse(xhr.responseText))
+        }
+    });
 }

@@ -302,7 +302,8 @@ function selectProfilePosts($profileId) {
     $result = postToDatabase($fields);
     $posts = [];
     foreach ($result['data'] as $item) {
-        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
+        date_default_timezone_set('EST');
+        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => date("F j, Y, g:i a", strtotime($item['timeStamp'])),
             'posted_by' => getCacheProfile($item['search_senderprofileID'])]);
     }
     return $posts;
@@ -573,6 +574,9 @@ function selectSmallProfile($profileId) {
     $fields = "opcode=6&profileID={$profileId}";
     $result = postToDatabase($fields);
     if (!isset($result['profileID'])) return null;
+    if (is_null($result['profilePicPath'])) {
+        $result['profilePicPath'] = "http://i.imgur.com/cIiHMjg.png";
+    }
     $json = ['profile_id' => $profileId, 'ucid' => getUcid($profileId), 'first_name' => $result['firstName'],'last_name' => $result['lastName'], 'image' => $result['profilePicPath']];
     return $json;
 }
