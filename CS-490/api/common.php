@@ -403,6 +403,7 @@ function getProfileId($ucid) {
 function getUcid($profileId) {
     $fields = "opcode=15&profileID={$profileId}";
     $result = postToDatabase($fields);
+
     if (isset($result['ucid'])) {
         return $result['ucid'];
     }
@@ -559,6 +560,9 @@ function selectProfile($profileId) {
     $relationship = getRelationship($result['search_relationshipID']);
     $gender = getGender($result['search_genderID']);
 
+    if (is_null($result['profilePicPath'])) {
+        $result['profilePicPath'] = "http://i.imgur.com/cIiHMjg.png";
+    }
     $json = ['profile_id' => $profileId, 'first_name' => $result['firstName'],'last_name' => $result['lastName'],
         'class_level' => $grade, 'relationship' => $relationship, 'gender' => $gender, 'about' => $result['status'],
         'image' => $result['profilePicPath']];

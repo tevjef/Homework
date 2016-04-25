@@ -1,20 +1,22 @@
 $(document).ready(function(){
-    var $results = $('.right p')
 
-    var $form_login_account = $('#form-login-account');
+    var $form_login = $('#form-login');
 
-    $form_login_account.submit(function() {
-        var $form = $(this);
-        $.post('../../../login/login.php', $form.serialize(), function(response, status, xhr){
-            console.log(response.account.ucid);
-            start_session(response.account.ucid);
-            getSession();
+    $form_login.submit(function() {
+        var $this = $(this);
+        postRequest($(this), function(response) {
+            if (response.error) {
+                $(".result").text("Your credentials are not correct")
+            } else {
+                start_session(response.account.ucid, $this.serializeArray()[1].value);
+                if (response.account.profile != null) {
+                    window.location.href = "profile.html"   ;
+                } else {
+                    window.location.href = "create-profile.html";
+                }
+            }
+        });
 
-                window.location.href = 'profile.html';
-            },'json')
-            .fail(function(xhr, textStatus, errorThrown) {
-                $results.text(xhr.responseText)
-            });
         return false
     });
 });
@@ -33,9 +35,41 @@ var qs = (function(a) {
     return b;
 })(window.location.search.substr(1).split('&'));
 
-function start_session(ucid) {
+
+function postRequest($form, $callback) {
+    $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
+            console.log(response);
+            $callback(JSON.parse(response));
+        },'text')
+        .fail(function(xhr, textStatus, errorThrown) {
+            console.log(xhr.responseText);
+            $callback(JSON.parse(xhr.responseText));
+        });
+}
+
+function postMultipartRequest($form) {
+    var formData = new FormData($form[0]);
+    $.ajax({
+        url: $form.attr('action'),
+        type: 'POST',
+        data: formData,
+        async: true,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(response, status, xhr){
+            $results.text(xhr.responseText)
+        },
+        error : function(xhr, textStatus, errorThrown) {
+            $results.text(xhr.responseText)
+        }
+    });
+    return false
+}
+
+function start_session(ucid, pass) {
     console.log("-->Starting Session");
-    $.post('login.php', 'ucid='+ucid, function(response, status, xhr){
+    $.post('php/login.php', 'ucid='+ucid+'&pass='+pass, function(response, status, xhr){
             console.log(response);
         },'json')
         .fail(function(xhr, textStatus, errorThrown) {
@@ -43,20 +77,27 @@ function start_session(ucid) {
         });
 }
 
-function getSession() {
+function getSession(callback) {
     console.log("-->Getting Session");
-    $.get('getlogin.php', "", function(response, status, xhr){
-            console.log(response);
-            return response;
-        },'json')
-        .fail(function(xhr, textStatus, errorThrown) {
-            console.log(xhr.responseText);
-        });
+    $.ajax({
+        url: 'php/getlogin.php',
+        type: 'GET',
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function(response, status, xhr){
+            callback(JSON.parse(xhr.responseText))
+        },
+        error : function(xhr, textStatus, errorThrown) {
+            callback(JSON.parse(xhr.responseText))
+        }
+    });
 }
 
 function end_session() {
     console.log("-->Ending Session");
-    $.post('logout.php', "", function(response, status, xhr){
+    $.post('php/logout.php', "", function(response, status, xhr){
             console.log(response);
         },'json')
         .fail(function(xhr, textStatus, errorThrown) {

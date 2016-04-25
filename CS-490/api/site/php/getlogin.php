@@ -1,5 +1,4 @@
 <?php
-include '../../../common.php';
 session_start();
 if (!isset($_SESSION['ucid'])) {
     die(json_encode(['message' => "User has not logged in yet.", 'error' => true]));
