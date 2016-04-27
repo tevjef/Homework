@@ -1,18 +1,19 @@
 $(document).ready(function(){
 
-    var ucid;
+    var logged_in_ucid;
     var pass;
+    var isAdmin;
 
     getSession(function(response) {
-        ucid = response.message.ucid;
+        logged_in_ucid = response.message.ucid;
         pass = response.message.pass;
 
-        $(".logged-in-as").text("Logged in as " + ucid);
+        $(".logged-in-as").text("Logged in as " + logged_in_ucid);
 
         if (qs['id'] != null) {
             LoadProfile(qs['id']);
         } else {
-            LoadProfile(ucid);
+            LoadProfile(logged_in_ucid);
         }
     });
 
@@ -29,11 +30,11 @@ $(document).ready(function(){
     });
 
     var to_ucid;
-    var from_ucid = ucid;
+    var from_ucid = logged_in_ucid;
     if (qs['id'] != null) {
         to_ucid = qs['id'];
     } else {
-        to_ucid = ucid;
+        to_ucid = logged_in_ucid;
     }
 
     var to = $("<input>").attr({'type':'hidden', 'name':'to_ucid'}).val(to_ucid);
@@ -78,6 +79,18 @@ $(document).ready(function(){
             // Set gender
             $(".profile-info .gender").text(profile.gender);
 
+            var $delete_profile = $('#profile-delete');
+            var $edit_profile = $('#profile-edit');
+
+            if (account.ucid != logged_in_ucid) {
+                $delete_profile.hide();
+                $edit_profile.hide();
+            }
+
+            $delete_profile.click(function() {
+                alert("Deleting profile not implemented");
+            });
+
             for (var i in profile.interests) {
                 $(".profile-info .interests").append(document.createTextNode(profile.interests[i].name + ", "));
             }
@@ -99,10 +112,23 @@ $(document).ready(function(){
         var $post = $(postDiv).load("elements/post.html", function (content, status, xhr) {
             $("#" + postId + " .post-header img").attr("src", postData.posted_by.image);
             $("#" + postId + " .profile-link").attr("href", "profile.html?id="+postData.posted_by.ucid)
-                .text(postData.posted_by.first_name + " " + postData.posted_by.first_name);
+                .text(postData.posted_by.first_name + " " + postData.posted_by.last_name);
             $("#" + postId + " .date").text(postData.timeStamp);
 
             $("#" + postId + " .post-body p").text(postData.postText);
+
+            // Delete post
+            var $delete_post = $("#" + postId + " .post-delete");
+            $delete_post.click(function(){
+                DeletePost(postData.id, function(response) {
+                    window.location.reload(false);
+                })
+            });
+
+            if (postData.posted_by.ucid != logged_in_ucid) {
+                $delete_post.hide();
+            }
+
 
         });
         $(".posts .utility-box").append($post);
@@ -127,6 +153,30 @@ $(document).ready(function(){
         callback(JSON.parse($.ajax({
             type: "POST",
             url: '../profile/index.php',
+            data: $.param(params),
+            async: false
+        }).responseText));
+    }
+
+    function DeletePost(postid, callback) {
+        var params = {
+            post_id:postid};
+
+        callback(JSON.parse($.ajax({
+            type: "POST",
+            url: '../profile/post/remove.php',
+            data: $.param(params),
+            async: false
+        }).responseText));
+    }
+
+    function DeleteProfile(ucid, callback) {
+        var params = {
+            ucid:ucid};
+
+        callback(JSON.parse($.ajax({
+            type: "POST",
+            url: '../login/remove.php',
             data: $.param(params),
             async: false
         }).responseText));

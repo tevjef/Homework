@@ -253,7 +253,7 @@ input[type=submit] {
 }
 
 .post {
-    margin-bottom: 5%;
+    margin-bottom: 10%;
 }
 
 #posts-wrapper {
@@ -262,13 +262,14 @@ input[type=submit] {
 }
 
 .post-header {
+    position: relative;
     height: 60px;
     width: 100%;
 }
 
 .post-header img {
-    border-radius: 5px;
     position: relative;
+    border-radius: 5px;
     float: left;
     top: 0;
     display: inline-block;
@@ -281,7 +282,22 @@ input[type=submit] {
     float: left;
     display: inline-block;
     height: 60px;
+    width: auto;
+    overflow: hidden;
 }
+
+.post-modifiers {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.post-modifiers a{
+    color: #757575;
+    font-weight: normal;
+    font-size: 11px;
+}
+
 
 .post-header .right span {
     font-size: 12px;
