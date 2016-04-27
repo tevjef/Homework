@@ -250,11 +250,37 @@
         </div>
     </form>
 
+    <form id="form-update-group" action="../group/update.php" method="post" >
+        <div class="form">
+            <h3>Update a group</h3>
+            <label>Group ID: </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <label>New Owner Id: </label><input type="text" placeholder="owner_id" name="owner_id" class="input-box">
+            <label>Group Name: </label><input type="text" placeholder="group_name" name="group_name" class="input-box"><br><br>
+          <!--  <label>Interests: </label>
+            <input class="interests-select" placeholder="interests[]"><br>
+            <ul class="interest-list">
+            </ul>-->
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
     <form id="form-select-group" action="../group/index.php" method="post" >
         <div class="form">
             <h3>Select a group</h3>
             <label>Group ID </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
             <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-delete-group" action="../group/remove.php" method="post" >
+        <div class="form">
+            <h3>Remove a group</h3>
+            <label>Group Id </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <br><br><input type="submit" value="Submit">
         </div>
         <div class="right details">
         </div>

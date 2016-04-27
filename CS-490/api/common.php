@@ -179,10 +179,17 @@ function searchGroupsByInterest($interest_id) {
     return $arr;
 }
 
+function deleteGroup($group_id) {
+    $fields = "opcode=22&groupID=$group_id";
+    $result = postToDatabase($fields);
+    return str_compare($result['message'], "Deleted");
+}
+
 function updateGroup($groupId, $groupName, $ownerID, $interests) {
     $fields = "opcode=21&groupID=$groupId";
 
     if (!empty($groupName)) {
+        $groupName = addslashes($groupName);
         $fields .= "&groupName=$groupName";
     }
     if (!empty($ownerID)) {
@@ -191,11 +198,7 @@ function updateGroup($groupId, $groupName, $ownerID, $interests) {
     $fields .= "&intrestsIDs=". json_encode($interests);
     $result = postToDatabase($fields);
 
-    if (str_compare($result['message'], 'updated')) {
-        return true;
-    } else {
-        die(encode_json(['message' => "There was an error creation group. Could not insert ids", 'error' => true]));
-    }
+    return str_compare($result['message'], 'updated');
 }
 
 function selectProfileGroups($profileId) {
@@ -401,7 +404,6 @@ function getProfileId($ucid) {
 function getUcid($profileId) {
     $fields = "opcode=15&profileID=$profileId";
     $result = postToDatabase($fields);
-
     if (isset($result['ucid'])) {
         return $result['ucid'];
     }

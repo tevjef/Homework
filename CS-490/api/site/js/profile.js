@@ -46,6 +46,10 @@ $(document).ready(function(){
         GetProfile(ucid, function(response) {
             console.log(response);
 
+            if (response.account == undefined) {
+                window.location.href = "404.html";
+            }
+
             if (response.account.profile == null && qs['id'] == null) {
                 console.log("Profile not created yet");
                     window.location.href = "create-profile.html";
@@ -75,12 +79,14 @@ $(document).ready(function(){
             $(".profile-info .gender").text(profile.gender);
 
             for (var i in profile.interests) {
-                console.log(profile.interests[i]);
                 $(".profile-info .interests").append(document.createTextNode(profile.interests[i].name + ", "));
             }
 
+            if (Object.keys(profile.posts).length == 0) {
+                $(".posts .utility-box").text("There are no posts here yet. Try making one.")
+            }
+
             for (var j in profile.posts) {
-                console.log(profile.posts[j]);
                 MakePost(profile.posts[j])
             }
 
@@ -107,7 +113,16 @@ $(document).ready(function(){
     }
 
     function GetProfile(ucid, callback) {
-        var params = {ucid:ucid,signed_in_ucid:ucid,profile:true,interests:true,recommend_people:true,groups_in:true,posts:true}
+        var params = {
+            ucid:ucid,
+            signed_in_ucid:ucid,
+            profile:true,
+            interests:true,
+            recommend_people:true,
+            recommend_groups:true,
+            groups_in:true,
+            groups_own:true,
+            posts:true};
 
         callback(JSON.parse($.ajax({
             type: "POST",
@@ -115,13 +130,6 @@ $(document).ready(function(){
             data: $.param(params),
             async: false
         }).responseText));
-
-        /* $.post('../profile/index.php', 'ucid='+ucid+'&signed_in_ucid='+ucid+'&profile=true', function(response, status, xhr){
-         callback(JSON.parse(xhr.responseText));
-         },'text')
-         .fail(function(xhr, textStatus, errorThrown) {
-         callback(JSON.parse(xhr.responseText));
-         });*/
     }
 
     var $form_create_profile = $('#form-create-profile');

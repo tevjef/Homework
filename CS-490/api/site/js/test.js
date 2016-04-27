@@ -57,11 +57,12 @@ $(document).ready(function(){
     var $form_remove_post = $('#form-remove-post');
 
     var $form_select_group = $('#form-select-group');
+    var $form_delete_group = $('#form-delete-group');
     var $form_search_group_name = $('#form-search-group-name');
     var $form_search_group_interest = $('#form-search-group-interest');
     var $form_list_group = $('#form-list-group');
-
     var $form_create_group = $('#form-create-group');
+    var $form_update_group = $('#form-update-group');
     var $form_create_group_post = $('#form-create-group-post');
 
     var $form_create_review = $('#form-create-review');
@@ -75,6 +76,7 @@ $(document).ready(function(){
     $form_create_account_no_njit.submit(submitAction);
     $form_login_account.submit(submitAction);
     $form_delete_account.submit(submitAction);
+
     $form_create_profile.submit(submitMultipartAction);
     $form_update_profile.submit(submitMultipartAction);
     $form_select_profile.submit(submitAction);
@@ -82,16 +84,16 @@ $(document).ready(function(){
     $form_remove_post.submit(submitAction);
 
     $form_select_group.submit(submitAction);
+    $form_delete_group.submit(submitAction);
     $form_search_group_name.submit(submitAction);
     $form_search_group_interest.submit(submitAction);
-
     $form_create_group.submit(submitAction);
+    $form_update_group.submit(submitAction);
     $form_create_group_post.submit(submitAction);
     $form_list_group.submit(submitAction);
 
     $form_create_review.submit(submitAction);
     $form_select_review.submit(submitAction);
-
     $form_select_student_review.submit(submitAction);
     $form_delete_student_review.submit(submitAction);
 
@@ -114,6 +116,13 @@ $(document).ready(function(){
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_create_group)
+    });
+
+    $form_update_group.find(".interests-select").autocomplete({
+        source: "../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectInterest($form_update_group)
     });
 
     $form_search_group_interest.find(".interests-select").autocomplete({
