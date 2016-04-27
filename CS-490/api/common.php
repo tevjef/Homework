@@ -27,52 +27,46 @@ function postRequest($url, $headers, $fields) {
 }
 
 
-function getRecommendedPeople($ucid) {
-    $profileId = getProfileId($ucid);
-    $interests = selectUserOptions($ucid, ['interests' => true])['profile']['interests'];
+function getRecommendedPeople($profileId) {
+    $ids = selectSimilarPeople($profileId);
 
-    $ids = [];
-    $reasons = [];
-    foreach ($interests as $item) {
-       array_push($reasons, $item['name']);
-        $sim = selectSimilarPeople($profileId, $item['id']);
-        $ids = array_merge($ids, $sim);
-    }
-    $ids = array_unique($ids);
-    $ids = array_filter($ids, function ($var) use ($profileId) { return ($var != $profileId); });
-
-    $profiles = [];
-    foreach ($ids as $id) {
-        $thisUcid = getUcid($id);
-        if (!is_null($thisUcid)) {
-            array_push($profiles, selectUserOptions($thisUcid, []));
-        }
-    }
-    return ["reason" => $reasons, 'people' => $profiles];
+    return $ids;
 }
 
-function selectSimilarPeople($profile_id, $interest_id){
-    $fields = "opcode=0&sql=SELECT profileID FROM profiles JOIN profileIntrests ON
-  profiles.profileID = profileIntrests.search_profileID
-  JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
- WHERE intrestID = $interest_id AND profileID <> $profile_id LIMIT 5";
+function selectSimilarPeople($profile_id){
+    $fields = "opcode=0&sql=SELECT profileID, intrestName, ucid, email, username FROM profiles JOIN profileIntrests
+    ON profiles.profileID = profileIntrests.search_profileID JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
+    JOIN passwords ON passwords.search_profileID = profiles.profileID WHERE intrestID IN (
+SELECT intrestID FROM profiles JOIN profileIntrests ON profiles.profileID = profileIntrests.search_profileID JOIN intrests
+ON intrests.intrestID = profileIntrests.search_intrestID JOIN passwords ON passwords.search_profileID = profiles.profileID
+WHERE profiles.profileID = $profile_id) AND profiles.profileID <> $profile_id";
+
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, $value['profileID']);
+        array_push($arr, ['id' => $value['profileID'], 'ucid' =>  $value['ucid'], 'username' =>  $value['username'],'email' =>  $value['email'], 'reason' =>  $value['intrestName']]);
     }
     return $arr;
 }
 
-function selectSimilarGroups($group_id, $interest_id){
+function getRecommendedGroups($profileId) {
+    $ids = selectSimilarGroups($profileId);
+    return $ids;
+}
+
+
+function selectSimilarGroups($profile_id){
     $fields = "opcode=0&sql=SELECT groupID, groupName, intrestName FROM groups
     JOIN groupsIntrests ON groups.groupID = groupsIntrests.search_groupID
-    JOIN intrests ON intrests.intrestID = groupsIntrests.search_intrestID
-    WHERE intrestID = $interest_id; LIMIT 5";
+    JOIN intrests ON intrests.intrestID = groupsIntrests.search_intrestID WHERE intrestID IN (
+    SELECT intrestID FROM profiles JOIN profileIntrests ON profiles.profileID = profileIntrests.search_profileID
+    JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
+    JOIN passwords ON passwords.search_profileID = profiles.profileID WHERE profiles.profileID = $profile_id)";
+
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, [$value['groupID']]);
+        array_push($arr, ['id' => $value['groupID'], 'name' =>  $value['groupName'], 'reason' =>  $value['intrestName']]);
     }
     return $arr;
 }
@@ -219,7 +213,7 @@ function selectGroup($groupId, $options = []) {
     $result = postToDatabase($fields);
 
     if (!isset($result['data']['search_ownerprofileID'])) {
-        die(encode_json(['message' => "The group does not exist", 'error' => true]));
+        return null;
     }
     $ownerUcid = getUcid($result['data']['search_ownerprofileID']);
 
@@ -369,7 +363,10 @@ function selectUserOptions($ucid, $options = []) {
             $json['reviews'] = selectStudentReviews($profileId);
         }
         if (isset($options['recommend_people'])?$options['recommend_people']:false) {
-            $json['profile']['recommend_people'] = getRecommendedPeople($ucid);
+            $json['profile']['recommend_people'] = getRecommendedPeople($profileId);
+        }
+        if (isset($options['recommend_groups'])?$options['recommend_groups']:false) {
+            $json['profile']['recommend_groups'] = getRecommendedGroups($profileId);
         }
         return $json;
     } else {
@@ -402,7 +399,7 @@ function getProfileId($ucid) {
 }
 
 function getUcid($profileId) {
-    $fields = "opcode=15&profileID={$profileId}";
+    $fields = "opcode=15&profileID=$profileId";
     $result = postToDatabase($fields);
 
     if (isset($result['ucid'])) {
@@ -444,10 +441,10 @@ function updateUser($ucid, $username, $last, $first, $password, $profileId) {
 
 function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image, $interests) {
     // Check if profile already exists
-/*    $result = selectUser($ucid);
-    if (!is_null($result['profile'])) {
-        return null;
-    }*/
+    /*    $result = selectUser($ucid);
+        if (!is_null($result['profile'])) {
+            return null;
+        }*/
     $profileId = initProfile($firstname, $lastname);
     $result = updateUser($ucid,"","","","",$profileId);
     if (is_null($result)) {
@@ -532,7 +529,7 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
         insertInterest($profileId, $value);
     }
 
-    if (!empty($firstname) || !empty($lastname) || !empty($classId) || !empty($genderId) || !empty($relationshipId) || !empty($status)) {
+    if (!empty($firstname) || !empty($lastname) || !empty($classId) || !empty($genderId) || !empty($relationshipId) || !empty($status) || !empty($image)) {
         $result = postToDatabase($fields);
         $message = $result['message'];
         if (str_compare($message, 'updated')) {
