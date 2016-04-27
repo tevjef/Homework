@@ -44,6 +44,13 @@ $(document).ready(function(){
     function LoadProfile(ucid) {
         console.log("Load ucid " + ucid);
         GetProfile(ucid, function(response) {
+            console.log(response);
+
+            if (response.account.profile == null && qs['id'] == null) {
+                console.log("Profile not created yet");
+                    window.location.href = "create-profile.html";
+            }
+
             var account = response.account;
             var profile = account.profile;
             // Set display image
@@ -116,4 +123,30 @@ $(document).ready(function(){
          callback(JSON.parse(xhr.responseText));
          });*/
     }
+
+    var $form_create_profile = $('#form-create-profile');
+    $form_create_profile.submit(function(){
+        postMultipartRequest($(this), function(response) {
+            if (!response.error) {
+                window.location.href = 'profile.html'
+            } else {
+                alert(response.message);
+            }
+        });
+        return false;
+    });
+
+    var $form_create_account = $('#form-create-account');
+    $form_create_account.submit(function(){
+        postRequest($(this), function(response) {
+            if (!response.error) {
+                window.location.href = 'create-profile.html'
+            } else {
+                alert(response.message);
+            }
+        });
+        return false;
+    });
+
+
 });

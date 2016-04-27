@@ -45,18 +45,18 @@ var submitMultipartAction = function(){
     return false;
 };
 
-function postRequest($form, $callback) {
+function postRequest($form, callback) {
     $.post($form.attr('action'), $form.serialize(), function(response, status, xhr){
             console.log(response);
-            $callback(JSON.parse(response));
+            callback(JSON.parse(response));
         },'text')
         .fail(function(xhr, textStatus, errorThrown) {
             console.log(xhr.responseText);
-            $callback(JSON.parse(xhr.responseText));
+            callback(JSON.parse(xhr.responseText));
         });
 }
 
-function postMultipartRequest($form) {
+function postMultipartRequest($form, callback) {
     var formData = new FormData($form[0]);
     $.ajax({
         url: $form.attr('action'),
@@ -67,10 +67,10 @@ function postMultipartRequest($form) {
         contentType: false,
         processData: false,
         success: function(response, status, xhr){
-            $results.text(xhr.responseText)
+            callback(xhr.responseText)
         },
         error : function(xhr, textStatus, errorThrown) {
-            $results.text(xhr.responseText)
+            callback(xhr.responseText)
         }
     });
     return false

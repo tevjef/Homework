@@ -3,7 +3,8 @@
 <link rel="stylesheet" href="css/styles.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script type="text/javascript" src="js/profile.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script type="text/javascript" src="js/create-profile.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 
 <head>
@@ -33,15 +34,15 @@
                 <h3>Create a profile</h3>
                 <div class="create-profile">
                     <form id="form-create-profile" action="../profile/create.php" method="post"><br>
-                        <label>UCID</label><br><input type="text" name="ucid" class="input-box"><br>
-                        <label>First Name</label><br><input type="text" name="first_name" class="input-box"><br>
-                        <label>Last Name</label><br><input type="text" name="last_name" class="input-box"><br>
+                        <label>First Name</label><br><input id="first-name" type="text" name="first_name" class="input-box"><br>
+                        <label>Last Name</label><br><input id="last-name" type="text" name="last_name" class="input-box"><br>
 
                         <label> About </label><br>
-                        <textarea class="textarea" name="about" rows="5" cols="30"></textarea>
+                        <textarea id="about" class="textarea" name="about" rows="5" cols="30"></textarea>
 
                         <label>Class Level</label><br>
-                        <select class="class-select" name="class_level">
+                        <select id="class-select" class="class-select" name="class_level">
+                            <option selected disabled hidden style='display: none' value=''></option>
                             <option value="1">Freshman</option>
                             <option value="2">Sophomore</option>
                             <option value="3">Junior</option>
@@ -49,7 +50,8 @@
                         </select><br>
 
                         <label>Relationship Status</label><br>
-                        <select class="relationship-select" name="relationship">
+                        <select id="relationship-select" class="relationship-select" name="relationship">
+                            <option selected disabled hidden style='display: none' value=''></option>
                             <option value="1">Single</option>
                             <option value="2">Dating</option>
                             <option value="3">Married</option>
@@ -57,7 +59,8 @@
                         </select><br>
 
                         <label>Gender</label><br>
-                        <select class="gender-select" name="gender">
+                        <select id="gender-select" class="gender-select" name="gender">
+                            <option selected disabled hidden style='display: none' value=''></option>
                             <option value="1">Male</option>
                             <option value="2">Female</option>
                             <option value="3">Other</option>
@@ -65,11 +68,11 @@
 
                         <label>Interests </label><br>
                         <input class="interests-select"><br>
-                        <ul class="interest-list">
-                        </ul>
-
+                        <div class="interest-list">
+                        </div>
+                        <br>
                         <label>Profile Image </label><br><input type="file" placeholder="file" name="file" class="input-box"><br><br>
-
+                        <p class="result" style="color: red"></p>
                         <input type="submit" value="Submit">
                     </form>
                 </div>

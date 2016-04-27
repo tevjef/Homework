@@ -96,49 +96,49 @@ $(document).ready(function(){
     $form_delete_student_review.submit(submitAction);
 
     $form_create_profile.find('.interests-select').autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_create_profile)
     });
 
     $form_update_profile.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_update_profile)
     });
 
     $form_create_group.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_create_group)
     });
 
     $form_search_group_interest.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectSingleInterest($form_search_group_interest)
     });
 
     $form_create_review.find(".class-select").autocomplete({
-        source: "../../classes.php",
+        source: "../classes.php",
         minLength: 2,
         // When option is selected
         select: onSelectClass($form_create_review)
     });
 
     $form_create_review.find(".professor-select").autocomplete({
-        source: "../../professors.php",
+        source: "../professors.php",
         minLength: 2,
         // When option is selected
         select: onSelectProfessor($form_create_review)
     });
 
     $form_select_review.find(".professor-select").autocomplete({
-        source: "../../professors.php",
+        source: "../professors.php",
         minLength: 2,
         // When option is selected
         select: onSelectProfessor($form_select_review)
