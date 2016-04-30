@@ -170,16 +170,22 @@ function selectReviewsByClass($class_id) {
 }
 
 function selectStudentReviews($profile_id) {
-    $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
+    $fields = "opcode=0&sql=SELECT reviews.*, classes.className, classes.classID, professorName FROM reviews JOIN classes ON
     classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
     WHERE search_studentprofileID=$profile_id ORDER BY timegiven DESC";
     $result = postToDatabase($fields);
     $arr = [];
     date_default_timezone_set('UTC');
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['reviewID'],  'professor_id' => $value['search_professorID'], 'name' => $value['professorName'],
-            'class' => $value['className'], 'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])) ,
-            'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText']]);
+        array_push($arr, [
+            'id' => $value['reviewID'],
+            'professor_id' => $value['search_professorID'],
+            'name' => $value['professorName'],
+            'class' => $value['className'],
+            'class_id' => $value['classID'],
+            'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])) ,
+            'rating' => $value['Reviewgrade'],
+            'review' => $value['ReviewText']]);
     }
     return $arr;
 }

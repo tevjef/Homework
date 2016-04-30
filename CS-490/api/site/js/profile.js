@@ -74,6 +74,10 @@ $(document).ready(function(){
             // Set about me
             $(".profile-info .about").text(profile.about);
 
+            // Set email
+            $(".profile-info .email").text(account.email);
+
+
             // Set class
             $(".profile-info .class").text(profile.class_level);
 
@@ -116,12 +120,14 @@ $(document).ready(function(){
 
             // If the logged in user is viewing their own page
             if (account.ucid == logged_in_ucid) {
-                GetGroups(account)
+                GetGroups(account);
                 GetRecommendedPeople(account)
             } else {
                 $('.your-groups').parent().hide();
                 $('.your-recommended-people').parent().hide();
             }
+
+            GetReviews(account)
         });
     }
 
@@ -171,6 +177,7 @@ $(document).ready(function(){
             signed_in_ucid:ucid,
             profile:true,
             interests:true,
+            reviews:true,
             recommend_people:true,
             recommend_groups:true,
             groups_in:true,
@@ -205,6 +212,15 @@ $(document).ready(function(){
         }
     }
 
+    function GetReviews(account) {
+        var $your_reviews = $('.your-reviews .listing');
+
+        for (var i in account.reviews) {
+            $your_reviews.append(MakeReviewListing(account.reviews[i]));
+        }
+    }
+
+
 
     function MakeGroupListing(group) {
         var $listing = $('<div class="group-listing"></div>');
@@ -234,6 +250,23 @@ $(document).ready(function(){
         return $listing
     }
 
+    function MakeReviewListing(review) {
+        var $listing = $('<div class="review-listing"></div>');
+
+        var $rating = $('<div class="score">'+review.rating+'</div>');
+
+        var $professor = $('<div class="professor"><a href="review.html?professor='+review.professor_id+'">'+review.name+'</a></div>');
+        var $class = $('<div class="class"><a href="review.html?class='+review.class_id+'">'+review.class+'</a></div>');
+
+        var $reviewText = $('<p>'+review.review+'</p>');
+
+        $listing.append($rating);
+        $listing.append($professor);
+        $listing.append($class);
+        $listing.append($reviewText);
+        $listing.append('<div class="clearfix"></div>');
+        return $listing
+    }
 
     function DeletePost(postid, callback) {
         var params = {
