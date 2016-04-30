@@ -238,6 +238,10 @@ function deleteGroup($group_id) {
 }
 
 function updateGroup($groupId, $groupName, $ownerID, $interests) {
+    $ownerID = getProfileId($ownerID);
+    if (is_null($ownerID)) {
+        return false;
+    }
     $fields = "opcode=21&groupID=$groupId";
 
     if (!empty($groupName)) {

@@ -18,9 +18,9 @@ if (empty($group_id)) {
 }*/
 
 $result = updateGroup($group_id, $group_name, $owner_id, $interests);
-if (is_null($result)) {
+if (!$result) {
     http_response_code(400);
-    die(encode_json(['message' => "There was an error updating profile. Is the UCID registered?", 'error' => true]));
+    die(encode_json(['message' => "There was an error updating group. Is the UCID registered?", 'error' => true]));
 } else {
     http_response_code(200);
     die(encode_json(['group' => selectGroup($group_id), 'error' => false]));
