@@ -7,6 +7,7 @@ $(document).ready(function(){
     getSession(function(response) {
         logged_in_ucid = response.message.ucid;
         pass = response.message.pass;
+        isAdmin = response.message.admin;
 
         $(".logged-in-as").text("Logged in as " + logged_in_ucid);
 
@@ -62,6 +63,9 @@ $(document).ready(function(){
             if (profile.image == null) {
                 profile.image = "http://i.imgur.com/cIiHMjg.png";
             }
+
+            document.title = profile.first_name + " " + profile.last_name + " - " + account.ucid;
+
             $(".display-image img").attr("src", profile.image);
 
             // Set full name
@@ -82,7 +86,7 @@ $(document).ready(function(){
             var $delete_profile = $('#profile-delete');
             var $edit_profile = $('#profile-edit');
 
-            if (account.ucid != logged_in_ucid) {
+            if (account.ucid != logged_in_ucid && !isAdmin) {
                 $delete_profile.hide();
                 $edit_profile.hide();
             }
@@ -111,10 +115,13 @@ $(document).ready(function(){
             }
 
             // If the logged in user is viewing their own page
-            //if (account.ucid == logged_in_ucid) {
+            if (account.ucid == logged_in_ucid) {
                 GetGroups(account)
                 GetRecommendedPeople(account)
-            //}
+            } else {
+                $('.your-groups').parent().hide();
+                $('.your-recommended-people').parent().hide();
+            }
         });
     }
 
@@ -144,7 +151,7 @@ $(document).ready(function(){
                 $delete_post.hide();
             }
 
-            if (account.ucid == logged_in_ucid) {
+            if (account.ucid == logged_in_ucid || isAdmin) {
                 $delete_post.show();
             }
 
@@ -184,6 +191,10 @@ $(document).ready(function(){
         for (var i in account.profile.groups_own) {
             $your_groups.append(MakeGroupListing(account.profile.groups_own[i]));
         }
+
+        if ((account.profile.groups_own).length == 0) {
+            $('.your-groups .title').text('You have no groups, try creating one!');
+        }
     }
 
     function GetRecommendedPeople(account) {
@@ -211,7 +222,7 @@ $(document).ready(function(){
 
     function MakePeopleListing(person) {
         var $listing = $('<div class="recommend-listing"></div>');
-        $listing.append('<img src="'+person.image+'">');
+        $listing.append('<a href=profile.html?id='+person.ucid+'> <img src="'+person.image+'"></a>');
 
         var $right = $('<div class="right"></div>');
         $right.append('<a class="profile-link" href=profile.html?id='+person.ucid+'>'

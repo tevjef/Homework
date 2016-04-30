@@ -70,6 +70,7 @@ $(document).ready(function(){
 
     var $form_create_review = $('#form-create-review');
     var $form_select_review = $('#form-select-review');
+    var $form_select_class_review = $('#form-select-class-review');
     var $form_select_student_review = $('#form-select-student-review');
     var $form_delete_student_review = $('#form-delete-student-review');
 
@@ -100,6 +101,7 @@ $(document).ready(function(){
 
     $form_create_review.submit(submitAction);
     $form_select_review.submit(submitAction);
+    $form_select_class_review.submit(submitAction);
     $form_select_student_review.submit(submitAction);
     $form_delete_student_review.submit(submitAction);
 
@@ -164,6 +166,13 @@ $(document).ready(function(){
         minLength: 2,
         // When option is selected
         select: onSelectProfessor($form_select_review)
+    });
+
+    $form_select_class_review.find(".class-select").autocomplete({
+        source: "../classes.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectClass($form_select_class_review)
     });
 
     function onSelectInterest($form) {

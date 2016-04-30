@@ -104,7 +104,7 @@ function selectProfessorReviews($professor_id) {
         die(encode_json(['message' => "This professor does not exist.", 'error' => true]));
     } else {
         $average = $result['globalaverage']['grade'];
-        $reviews = selectReviews($professor_id);
+        $reviews = selectReviewsByProfessor($professor_id);
         $review = ['id' => $professor_id, 'name' => $name, 'average' => $average, 'reviews' => $reviews];
         return $review;
     }
@@ -116,7 +116,7 @@ function removeReviews($review_id) {
     return ['result' => $result];
 }
 
-function selectReviews($professor_id) {
+function selectReviewsByProfessor($professor_id) {
     $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
     classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
     WHERE search_professorID=$professor_id ORDER BY timegiven DESC";
@@ -124,11 +124,49 @@ function selectReviews($professor_id) {
     date_default_timezone_set('UTC');
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['reviewID'], 'class' => $value['className'],
+        array_push($arr, ['id' => $value['reviewID'],
+            'class_id' => $value['search_classID'],
+            'class' => $value['className'],
             'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])),
             'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText']]);
     }
     return $arr;
+}
+
+function getClassAverageReview($class_id) {
+    $fields = "opcode=0&sql=SELECT avg(reviewgrade) avg FROM reviews
+    JOIN classes ON classes.classID = reviews.search_classID
+    JOIN professors ON professorID = reviews.search_professorID
+    WHERE classes.classID=$class_id ORDER BY timegiven DESC";
+
+    $result = postToDatabase($fields);
+    return $result['data'][0]['avg'];
+}
+
+function selectReviewsByClass($class_id) {
+
+    $average = getClassAverageReview($class_id);
+
+    $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
+    classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
+    WHERE classes.classID=$class_id ORDER BY timegiven DESC";
+    $result = postToDatabase($fields);
+    date_default_timezone_set('UTC');
+
+    $class_name ="";
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        $class_name = $value['className'];
+        array_push($arr, ['id' => $value['reviewID'],
+            'professor_id' => $value['search_professorID'],
+            'professor_name' => $value['professorName'],
+            'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])),
+            'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText']]);
+    }
+
+    $review = ['id' => $class_id, 'name' => $class_name, 'average' => $average, 'reviews' => $arr];
+
+    return $review;
 }
 
 function selectStudentReviews($profile_id) {
