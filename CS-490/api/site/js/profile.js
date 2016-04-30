@@ -88,7 +88,14 @@ $(document).ready(function(){
             }
 
             $delete_profile.click(function() {
-                alert("Deleting profile not implemented");
+                var bool = confirm("Are you sure?   ");
+                if (bool == true) {
+                    alert("Deleting profile not implemented");
+                }
+            });
+
+            $edit_profile.click(function() {
+                $profile_update.dialog("open");
             });
 
             for (var i in profile.interests) {
@@ -100,13 +107,18 @@ $(document).ready(function(){
             }
 
             for (var j in profile.posts) {
-                MakePost(profile.posts[j])
+                MakePost(account, profile.posts[j])
             }
 
+            // If the logged in user is viewing their own page
+            //if (account.ucid == logged_in_ucid) {
+                GetGroups(account)
+                GetRecommendedPeople(account)
+            //}
         });
     }
 
-    function MakePost(postData) {
+    function MakePost(account, postData) {
         var postId ='post-' + postData.id;
         var postDiv = '<div id="' + postId + '"></div>';
         var $post = $(postDiv).load("elements/post.html", function (content, status, xhr) {
@@ -120,14 +132,22 @@ $(document).ready(function(){
             // Delete post
             var $delete_post = $("#" + postId + " .post-delete");
             $delete_post.click(function(){
-                DeletePost(postData.id, function(response) {
-                    window.location.reload(false);
-                })
+                var bool = confirm("Are you sure");
+                if (bool == true) {
+                    DeletePost(postData.id, function(response) {
+                        window.location.reload(false);
+                    })
+                }
             });
 
             if (postData.posted_by.ucid != logged_in_ucid) {
                 $delete_post.hide();
             }
+
+            if (account.ucid == logged_in_ucid) {
+                $delete_post.show();
+            }
+
 
 
         });
@@ -158,6 +178,52 @@ $(document).ready(function(){
         }).responseText));
     }
 
+    function GetGroups(account) {
+        var $your_groups = $('.your-groups .listing');
+
+        for (var i in account.profile.groups_own) {
+            $your_groups.append(MakeGroupListing(account.profile.groups_own[i]));
+        }
+    }
+
+    function GetRecommendedPeople(account) {
+        var $your_groups = $('.your-recommended-people .listing');
+
+        for (var i in account.profile.recommend_people) {
+            $your_groups.append(MakePeopleListing(account.profile.recommend_people[i]));
+        }
+    }
+
+
+    function MakeGroupListing(group) {
+        var $listing = $('<div class="group-listing"></div>');
+        $listing.append('<a href="group.html?id='+group.id+'">'+group.name+'</a>');
+
+        var string = "Focused on ";
+        for (var i in group.interests) {
+            string += group.interests[i].name + ", "
+        }
+
+        string = string.slice(0, -2);
+        $listing.append('<p>'+string+'</p>');
+        return $listing
+    }
+
+    function MakePeopleListing(person) {
+        var $listing = $('<div class="recommend-listing"></div>');
+        $listing.append('<img src="'+person.image+'">');
+
+        var $right = $('<div class="right"></div>');
+        $right.append('<a class="profile-link" href=profile.html?id='+person.ucid+'>'
+            +person.first_name + ' ' + person.last_name+'</a>');
+        $right.append('<p>'+person.username+'</p>');
+
+        $listing.append($right);
+        $listing.append('<div class="clearfix"></div>');
+        return $listing
+    }
+
+
     function DeletePost(postid, callback) {
         var params = {
             post_id:postid};
@@ -182,8 +248,20 @@ $(document).ready(function(){
         }).responseText));
     }
 
-    var $form_create_profile = $('#form-create-profile');
-    $form_create_profile.submit(function(){
+    var $profile_update = $('#profile-update');
+
+    $profile_update.dialog({
+        autoOpen: false, modal:true
+    });
+
+    $('#close-button').click(function() {
+        $profile_update.dialog("destroy");
+    });
+
+    var form_ucid = $("<input>").attr({'type':'hidden', 'name':'ucid'}).val(logged_in_ucid);
+    var $form_update_profile = $('#form-update-profile');
+    $form_update_profile.append(form_ucid);
+    $form_update_profile.submit(function(){
         postMultipartRequest($(this), function(response) {
             if (!response.error) {
                 window.location.href = 'profile.html'
@@ -194,16 +272,11 @@ $(document).ready(function(){
         return false;
     });
 
-    var $form_create_account = $('#form-create-account');
-    $form_create_account.submit(function(){
-        postRequest($(this), function(response) {
-            if (!response.error) {
-                window.location.href = 'create-profile.html'
-            } else {
-                alert(response.message);
-            }
-        });
-        return false;
+    $form_update_profile.find(".interests-select").autocomplete({
+        source: "../../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectInterest($form_update_profile)
     });
 
 

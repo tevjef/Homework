@@ -51,28 +51,4 @@ $(document).ready(function(){
             validation_failed = true;
         }
     }
-    function onSelectInterest($form) {
-        return function( event, ui ) {
-            var interest_id = "interest-" + ui.item.interest_id;
-            var button_id = "button-" + ui.item.interest_id;
-
-            // Create a shadow input field that will be transferred to the server.
-            var input = $('<input id="'+interest_id+'">').attr({'type':'hidden', 'name':'interests[]'}).val(ui.item.interest_id);
-            // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
-            $form.append($(input));
-
-            // Empty the box after select
-            $form.find('.interests-select').val("");
-            // Display the selected value
-
-            var $button = $('<button  id="'+button_id+'" style="margin-right: 5px;" type="button" disabled="disabled" name="'+interest_id+'">');
-         /*   $button.click(function(){
-                $('#'+button_id+'').remove();
-                $('#'+interest_id+'').remove()
-            });*/
-            $form.find(".interest-list").append($button.text(ui.item.label));
-
-            return false;
-        }
-    }
 });

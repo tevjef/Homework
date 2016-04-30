@@ -209,6 +209,38 @@
         </div>
     </form>
 
+    <form id="form-search-profile-interest" action="../profile/search.php" method="post" >
+        <div class="form">
+            <h3>Search profile by interest</h3>
+            <label>Interest </label>
+            <input class="interests-select" placeholder="interest"><br>
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-search-profile-name" action="../profile/search.php" method="post" >
+        <div class="form">
+            <h3>Search profile by name</h3>
+            <label>First or last name</label><input type="text" placeholder="name" name="name" class="input-box">
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+
+            <p>An empty search will list all</p>
+        </div>
+    </form>
+
+<!--    <form id="form-search-profile-ucid" action="../profile/search.php" method="post" >
+        <div class="form">
+            <h3>Search profile by ucid</h3>
+            <label>UCID: </label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>-->
 
     <form id="form-create-post" action="../profile/post/create.php" method="post" >
         <div class="form">
@@ -242,6 +274,8 @@
             <label>Group Name: </label><input type="text" placeholder="group_name" name="group_name" class="input-box"><br><br>
             <label>Interests: </label>
             <input class="interests-select" placeholder="interests[]"><br>
+            <ul class="interest-list">
+            </ul> <input class="interests-select" placeholder="interests[]"><br>
             <ul class="interest-list">
             </ul>
             <input type="submit" value="Submit">
