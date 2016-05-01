@@ -25,7 +25,7 @@
             <div class="left">
                 <div id="logo">NJIT SOCIAL</div>
                 <ul id="menu">
-                    <li><a href="profile.html">Profile</a></li>
+                    <li><a  style=" color: #ec2327;" href="profile.html">Profile</a></li>
                     <li><a href="group.html">Groups</a></li>
                     <li><a href="review.html">Reviews</a></li>
                 </ul>
@@ -40,7 +40,7 @@
     <div id="content">
         <div class="content-left">
             <div class="utility-box">
-                <div class="profile-info">
+                <div class="meta-info">
                     <div class="item">
                         <div class="display-image"><img src=""></div>
                         <h3 class="name">Tevin Jeffrey</h3>
@@ -69,8 +69,8 @@
                     </div>
 
                     <div class="item" style="margin: 0 auto">
-                        <button id="profile-edit" type="button">Edit Profile</button><br><br>
-                        <p><a id="profile-delete" href="#">Delete Profile</a>
+                        <button id="meta-edit" type="button">Edit Profile</button><br><br>
+                        <p><a id="meta-delete" href="#">Delete Profile</a>
                     </div>
 
                     <div style="display: none;" id="profile-update">
@@ -124,6 +124,35 @@
                     </div>
                 </div>
             </div>
+
+            <div class="utility-box">
+                <div class="search-name">
+                    <div class="title">Search by name</div>
+                    <br>
+                    <form id="form-search-profile-name" action="search.html" method="get" >
+                        <input type="text" placeholder="First or last name" name="user" class="input-box">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+
+            <div class="utility-box">
+                <div class="search-name">
+                    <div class="title">Search by Interest</div>
+                    <br>
+                    <form id="form-search-profile-interest" action="search.html" method="get" >
+                        <input class="interests-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+
         </div>
 
         <div class="content-middle">
@@ -143,18 +172,6 @@
         </div>
 
         <div class="content-right">
-            <div class="utility-box">
-                <div class="search-name">
-                    <div class="title">Search by name</div>
-                    <br>
-                    <form id="form-search-profile-name" action="../profile/search.php" method="post" >
-                        <input type="text" placeholder="First or last name" name="name" class="input-box">
-                        <br><input type="submit" value="Search">
-                    </form>
-                </div>
-                <div class="clearfix"></div>
-
-            </div>
 
             <div class="utility-box">
                 <div class="your-groups">

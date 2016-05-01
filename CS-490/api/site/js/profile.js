@@ -19,17 +19,6 @@ $(document).ready(function(){
     });
 
     var $form_create_post = $('#form-create-post');
-    $form_create_post.submit(function(){
-        postRequest($(this), function(response) {
-            if (!response.error) {
-                window.location.reload(false);
-            } else {
-                alert(response.message);
-            }
-        });
-        return false;
-    });
-
     var to_ucid;
     var from_ucid = logged_in_ucid;
     if (qs['id'] != null) {
@@ -42,6 +31,18 @@ $(document).ready(function(){
     var from = $("<input>").attr({'type':'hidden', 'name':'from_ucid'}).val(from_ucid);
     $form_create_post.append(to);
     $form_create_post.append(from);
+    $form_create_post.submit(function(){
+        postRequest($(this), function(response) {
+            if (!response.error) {
+                window.location.reload(false);
+            } else {
+                alert(response.message);
+            }
+        });
+        return false;
+    });
+
+
 
     function LoadProfile(ucid) {
         console.log("Load ucid " + ucid);
@@ -69,23 +70,23 @@ $(document).ready(function(){
             $(".display-image img").attr("src", profile.image);
 
             // Set full name
-            $(".profile-info .name").text(profile.first_name +  " " + profile.last_name);
+            $(".meta-info .name").text(profile.first_name +  " " + profile.last_name);
 
             // Set about me
-            $(".profile-info .about").text(profile.about);
+            $(".meta-info .about").text(profile.about);
 
             // Set email
-            $(".profile-info .email").text(account.email);
+            $(".meta-info .email").text(account.email);
 
 
             // Set class
-            $(".profile-info .class").text(profile.class_level);
+            $(".meta-info .class").text(profile.class_level);
 
             // Set relationship status
-            $(".profile-info .relationship").text(profile.relationship);
+            $(".meta-info .relationship").text(profile.relationship);
 
             // Set gender
-            $(".profile-info .gender").text(profile.gender);
+            $(".meta-info .gender").text(profile.gender);
 
             var $delete_profile = $('#profile-delete');
             var $edit_profile = $('#profile-edit');
@@ -107,7 +108,7 @@ $(document).ready(function(){
             });
 
             for (var i in profile.interests) {
-                $(".profile-info .interests").append(document.createTextNode(profile.interests[i].name + ", "));
+                $(".meta-info .interests").append(document.createTextNode(profile.interests[i].name + ", "));
             }
 
             if (Object.keys(profile.posts).length == 0) {
@@ -237,7 +238,7 @@ $(document).ready(function(){
     }
 
     function MakePeopleListing(person) {
-        var $listing = $('<div class="recommend-listing"></div>');
+        var $listing = $('<div class="generic-listing"></div>');
         $listing.append('<a href=profile.html?id='+person.ucid+'> <img src="'+person.image+'"></a>');
 
         var $right = $('<div class="right"></div>');
@@ -323,5 +324,14 @@ $(document).ready(function(){
         select: onSelectInterest($form_update_profile)
     });
 
+
+    var $form_search_profile_interest = $('#form-search-profile-interest');
+    $form_search_profile_interest.append($("<input>").attr({'type':'hidden', 'name':'type'}).val("profile"));
+    $form_search_profile_interest.find(".interests-select").autocomplete({
+        source: "../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectSingleInterest($form_search_profile_interest)
+    });
 
 });
