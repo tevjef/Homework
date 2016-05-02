@@ -12,12 +12,9 @@ if (empty($group_id)) {
     die(encode_json(['message' => "Bad Request - Must provide group_id when updating a group.", 'error' => true]));
 }
 
-/*if (!(!empty($group_name) && !empty($owner_id))) {
-    http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide values for at least one field when updating a group.", 'error' => true]));
-}*/
+$profile_id = getProfileId($owner_id);
 
-$result = updateGroup($group_id, $group_name, $owner_id, $interests);
+$result = updateGroup($group_id, $group_name, $profile_id, $interests);
 if (!$result) {
     http_response_code(400);
     die(encode_json(['message' => "There was an error updating group. Is the UCID registered?", 'error' => true]));

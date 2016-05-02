@@ -83,6 +83,7 @@ function createReview($ucid, $class_id, $professor_id, $rating, $text) {
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
     $profileId = getProfileId($ucid);
+    $text = addslashes($text);
     $fields = "opcode=26&professorID=$professor_id&studentID=$profileId&classID=$class_id&timegiven=$timestamp&reviewgrade=$rating&reviewtext=$text";
     $result = postToDatabase($fields);
 
@@ -200,13 +201,14 @@ function selectProfessorName($professor_id) {
 
 function createGroup($ucid, $groupName, $interests) {
     $profileId = getProfileId($ucid);
+    $groupName = addslashes($groupName);
     $fields = "opcode=18&groupName=$groupName&ownerID=$profileId";
     $result = postToDatabase($fields);
 
     $message = $result['message'];
     if (str_compare($message, 'Exists')) {
         die(encode_json(['message' => "There was an error creation group.  $groupName already exists", 'error' => true]));
-    } else if (strcmp($message, 'inserted')) {
+    } else if (str_compare($message, 'inserted group')) {
         $groupId = $result['groupID'];
         if(updateGroup($groupId, $groupName, $profileId, $interests)) {
             return selectUserOptions($ucid, ["groups_own" => true]);
@@ -244,10 +246,6 @@ function deleteGroup($group_id) {
 }
 
 function updateGroup($groupId, $groupName, $ownerID, $interests) {
-    $ownerID = getProfileId($ownerID);
-    if (is_null($ownerID)) {
-        return false;
-    }
     $fields = "opcode=21&groupID=$groupId";
 
     if (!empty($groupName)) {
@@ -305,6 +303,7 @@ function createGroupPost($group_id, $from_ucid,$postText) {
     $from_profileId = getProfileId($from_ucid);
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
+    $postText = addslashes($postText);
     $fields = "opcode=9&posterID=$from_profileId&groupID=$group_id&postText=$postText&timeStamp=$timestamp";
     $result = postToDatabase($fields);
     $message = $result['message'];
@@ -340,6 +339,7 @@ function createProfilePost($to_ucid, $from_ucid, $postText) {
     $from_profileId = getProfileId($from_ucid);
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
+    $postText = addslashes($postText);
     $fields = "opcode=9&posterID={$from_profileId}&profileID={$to_profileId}&postText={$postText}&timeStamp={$timestamp}";
     $result = postToDatabase($fields);
     $message = $result['message'];
@@ -724,7 +724,7 @@ function checkPassword($user, $pass){
 
 function postToDatabase($fields) {
     //var_dump($fields);
-    $result = postRequest('https://web.njit.edu/~maz9/DB/P3/', [], $fields);
+    $result = postRequest('https://web.njit.edu/~maz9/DB/P4/', [], $fields);
     //var_dump($result);
     return json_decode($result, true);
 }

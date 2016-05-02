@@ -60,57 +60,46 @@
                         <button id="meta-edit" type="button">Edit Group</button><br><br>
                         <p><a id="meta-delete" href="#">Delete Group</a>
                     </div>
-<!--
-                    <div style="display: none;" id="group-update">
-                        <div class="create-group">
+                    <div style="display: none;" id="meta-update">
+                        <div class="update-group">
                             <h3>Update your group</h3>
                             <form id="form-update-group" action="../group/update.php" method="post"><br>
-                                <label>First Name</label><br><input id="first-name" type="text" name="first_name" class="input-box"><br>
-                                <label>Last Name</label><br><input id="last-name" type="text" name="last_name" class="input-box"><br>
-
-                                <label> About </label><br>
-                                <textarea id="about" class="textarea" name="about" rows="5" cols="30"></textarea>
-
-                                <label>Class Level</label><br>
-                                <select id="class-select" class="class-select" name="class_level">
-                                    <option selected disabled hidden style='display: none' value=''></option>
-                                    <option value="1">Freshman</option>
-                                    <option value="2">Sophomore</option>
-                                    <option value="3">Junior</option>
-                                    <option value="4">Senior</option>
-                                </select><br>
-
-                                <label>Relationship Status</label><br>
-                                <select id="relationship-select" class="relationship-select" name="relationship">
-                                    <option selected disabled hidden style='display: none' value=''></option>
-                                    <option value="1">Single</option>
-                                    <option value="2">Dating</option>
-                                    <option value="3">Married</option>
-                                    <option value="4">Complicated</option>
-                                </select><br>
-
-                                <label>Gender</label><br>
-                                <select id="gender-select" class="gender-select" name="gender">
-                                    <option selected disabled hidden style='display: none' value=''></option>
-                                    <option value="1">Male</option>
-                                    <option value="2">Female</option>
-                                    <option value="3">Other</option>
-                                </select> <br>
-
-                                <label>Interests </label><br>
-                                <input class="interests-select"><br>
-                                <div class="interest-list">
-                                </div>
-                                <br>
-                                <label>group Image </label><br><input type="file" placeholder="file" name="file" class="input-box"><br><br>
+                                <label>Group Name</label><br><input type="text" name="group_name" class="input-box"><br>
+                                <label>Change owner UCID</label><br><input type="text" name="owner_id" class="input-box"><br>
                                 <p class="result" style="color: red"></p>
+                                <br>
                                 <button id="close-button">Close</button>
                                 <input type="submit" value="Submit">
-                                <div class="clearfix"></div>
                             </form>
                         </div>
-                    </div>-->
+                    </div>
                 </div>
+            </div>
+
+            <div class="utility-box">
+                <div class="search-name">
+                    <div class="title">Search by name</div>
+                    <br>
+                    <form id="form-search-group-name" action="../group/search.php" method="post" >
+                        <input type="text" placeholder="Name" name="group" class="input-box">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+            <div class="utility-box">
+                <div class="search-interest">
+                    <div class="title">Search by interest</div>
+                    <br>
+                    <form id="form-search-group-interest" action="../group/search.php" method="post" >
+                        <input class="interests-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
             </div>
         </div>
 
@@ -132,32 +121,21 @@
 
         <div class="content-right">
             <div class="utility-box">
-                <div class="search-name">
-                    <div class="title">Search by name</div>
-                    <br>
-                    <form id="form-search-group-name" action="../group/search.php" method="post" >
-                        <input type="text" placeholder="Name" name="name" class="input-box">
-                        <br><input type="submit" value="Search">
-                    </form>
+                <div class="your-groups">
+                    <div class="title">Your Groups</div>
+                    <div class="listing">
+
+                    </div>
                 </div>
-                <div class="clearfix"></div>
-
             </div>
-
             <div class="utility-box">
-                <div class="search-interest">
-                    <div class="title">Search by interest</div>
-                    <br>
-                    <form id="form-search-group-interest" action="../group/search.php" method="post" >
-                        <input type="text" placeholder="Name" name="name" class="input-box">
-                        <br><input type="submit" value="Search">
-                    </form>
+                <div class="your-recommend-groups">
+                    <div class="title">Groups You May Like</div>
+                    <div class="listing">
+
+                    </div>
                 </div>
-                <div class="clearfix"></div>
-
             </div>
-
-
         </div>
     </div>
     </div>

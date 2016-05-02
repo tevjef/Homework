@@ -78,7 +78,6 @@ $(document).ready(function(){
             // Set email
             $(".meta-info .email").text(account.email);
 
-
             // Set class
             $(".meta-info .class").text(profile.class_level);
 
@@ -88,8 +87,8 @@ $(document).ready(function(){
             // Set gender
             $(".meta-info .gender").text(profile.gender);
 
-            var $delete_profile = $('#profile-delete');
-            var $edit_profile = $('#profile-edit');
+            var $delete_profile = $('#meta-delete');
+            var $edit_profile = $('#meta-edit');
 
             if (account.ucid != logged_in_ucid && !isAdmin) {
                 $delete_profile.hide();
@@ -97,7 +96,7 @@ $(document).ready(function(){
             }
 
             $delete_profile.click(function() {
-                var bool = confirm("Are you sure?   ");
+                var bool = confirm("Are you sure?");
                 if (bool == true) {
                     alert("Deleting profile not implemented");
                 }
@@ -293,7 +292,7 @@ $(document).ready(function(){
         }).responseText));
     }
 
-    var $profile_update = $('#profile-update');
+    var $profile_update = $('#meta-update');
 
     $profile_update.dialog({
         autoOpen: false, modal:true
