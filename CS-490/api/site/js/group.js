@@ -44,7 +44,8 @@ $(document).ready(function() {
                     } else {
                         $('.result').text(response.message);
                     }
-                })
+                });
+                return false;
             });
             $form.find(".interests-select").autocomplete({
                 source: "../../interests.php",
@@ -111,7 +112,7 @@ $(document).ready(function() {
             $delete_group.click(function() {
                 var bool = confirm("Are you sure?");
                 if (bool == true) {
-                    alert("Deleting group not implemented");
+                    alert("Deleting group not implemented yet. Uncomment to enable!");
                 }
             });
 
@@ -155,13 +156,13 @@ $(document).ready(function() {
                 }
             });
 
-           /* if (postData.posted_by.ucid != logged_in_ucid) {
+            if (postData.posted_by.ucid != logged_in_ucid) {
                 $delete_post.hide();
             }
 
             if (account.ucid == logged_in_ucid || isAdmin) {
                 $delete_post.show();
-            }*/
+            }
 
 
 
@@ -189,7 +190,8 @@ $(document).ready(function() {
         var $your_recommended_groups = $('.your-recommend-groups .listing');
 
         for (var i in account.profile.recommend_groups) {
-            $your_recommended_groups.append(MakeGroupListing(account.profile.recommend_groups[i]));
+            var group = account.profile.recommend_groups[i];
+            $your_recommended_groups.append(MakeGroupListing(group));
         }
 
         if ((account.profile.recommend_groups).length == 0) {
@@ -212,6 +214,10 @@ $(document).ready(function() {
             }
 
             string = string.slice(0, -2);
+
+            if (group.interests.length == 0) {
+                string = ""
+            }
         }
         $listing.append('<p>'+string+'</p>');
         return $listing
@@ -245,15 +251,13 @@ $(document).ready(function() {
 
 
     var $form_search_group_interest = $('#form-search-group-interest');
-    $form_search_group_interest.append($("<input>").attr({'type':'hidden', 'name':'type'}).val("group_interest"));
+    $form_search_group_interest.append($("<input>").attr({'type':'hidden', 'name':'type'}).val("group"));
     $form_search_group_interest.find(".interests-select").autocomplete({
         source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectSingleInterest($form_search_group_interest)
     });
-
-
 });
 
 function GetProfileGroups(ucid, callback) {

@@ -64,17 +64,24 @@ function getRecommendedGroups($profileId) {
 
 
 function selectSimilarGroups($profile_id){
-    $fields = "opcode=0&sql=SELECT groupID, groupName, intrestName FROM groups
+    $fields = "opcode=0&sql=SELECT groupID, groupName, intrestName, search_ownerprofileID, ucid FROM groups
     JOIN groupsIntrests ON groups.groupID = groupsIntrests.search_groupID
-    JOIN intrests ON intrests.intrestID = groupsIntrests.search_intrestID WHERE intrestID IN (
+    JOIN intrests ON intrests.intrestID = groupsIntrests.search_intrestID
+    JOIN passwords ON search_ownerProfileID = passwords.search_profileID
+    WHERE intrestID IN (
     SELECT intrestID FROM profiles JOIN profileIntrests ON profiles.profileID = profileIntrests.search_profileID
     JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
-    JOIN passwords ON passwords.search_profileID = profiles.profileID WHERE profiles.profileID = $profile_id)";
+    JOIN passwords ON passwords.search_profileID = profiles.profileID WHERE profiles.profileID = $profile_id)
+    AND search_ownerprofileID <> $profile_id";
 
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['groupID'], 'name' =>  $value['groupName'], 'reason' =>  $value['intrestName']]);
+        array_push($arr, ['id' => $value['groupID'],
+            'name' =>  $value['groupName'],
+            'ownerId' =>  $value['search_ownerprofileID'],
+            'ownerUcid' =>  $value['ucid'],
+            'reason' =>  $value['intrestName']]);
     }
     return $arr;
 }
@@ -210,7 +217,7 @@ function createGroup($ucid, $groupName, $interests) {
         die(encode_json(['message' => "There was an error creation group.  $groupName already exists", 'error' => true]));
     } else if (str_compare($message, 'inserted group')) {
         $groupId = $result['groupID'];
-        if(updateGroup($groupId, $groupName, $profileId, $interests)) {
+        if(updateGroup($groupId, "", "", $interests)) {
             return selectUserOptions($ucid, ["groups_own" => true]);
         }
     }
@@ -219,22 +226,35 @@ function createGroup($ucid, $groupName, $interests) {
 
 function searchGroupsByName($keyword) {
     /*SELECT * FROM groups WHERE groupName LIKE '%%'*/
-    $fields = "opcode=0&sql=SELECT * FROM groups WHERE groupName LIKE '%$keyword%'";
+    $fields = "opcode=0&sql=SELECT * FROM groups
+     JOIN passwords on passwords.search_profileID = groups.search_ownerprofileID WHERE groupName LIKE '%$keyword%'";
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['groupID'], 'name' => $value['groupName']]);
+        array_push($arr, ['id' => $value['groupID'],
+            'name' => $value['groupName'],
+            'ownerId' => $value['search_ownerprofileID'],
+            'ownerUcid' => $value['ucid'],
+
+        ]);
     }
     return $arr;
 }
 
 function searchGroupsByInterest($interest_id) {
-    $fields = "opcode=0&sql=SELECT groups.* FROM groups JOIN groupsIntrests ON groupID = search_groupID JOIN
-    intrests ON intrestID = search_intrestID WHERE intrestID = $interest_id";
+    $fields = "opcode=0&sql=SELECT * FROM groups JOIN groupsIntrests ON groupID = search_groupID JOIN
+    intrests ON intrestID = search_intrestID
+    JOIN passwords on passwords.search_profileID = groups.search_ownerprofileID
+    WHERE intrestID = $interest_id";
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['groupID'], 'name' => $value['groupName']]);
+        array_push($arr, ['id' => $value['groupID'],
+            'name' => $value['groupName'],
+            'ownerId' => $value['search_ownerprofileID'],
+            'ownerUcid' => $value['ucid'],
+
+        ]);
     }
     return $arr;
 }

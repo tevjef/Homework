@@ -98,11 +98,13 @@ $(document).ready(function(){
             $delete_profile.click(function() {
                 var bool = confirm("Are you sure?");
                 if (bool == true) {
-                    alert("Deleting profile not implemented");
+                    alert("Deleting profile not implemented yet. Uncomment to enable!");
                 }
             });
 
             $edit_profile.click(function() {
+                $profile_update.show();
+                $profile_update.find('.result').text("");
                 $profile_update.dialog("open");
             });
 
@@ -218,6 +220,10 @@ $(document).ready(function(){
         for (var i in account.reviews) {
             $your_reviews.append(MakeReviewListing(account.reviews[i]));
         }
+
+        if (account.reviews.length == 0) {
+            $('.your-reviews').append('<a href="review.html">Make a review</a>')
+        }
     }
 
 
@@ -232,6 +238,10 @@ $(document).ready(function(){
         }
 
         string = string.slice(0, -2);
+        if (group.interests.length == 0) {
+            string = ""
+        }
+
         $listing.append('<p>'+string+'</p>');
         return $listing
     }
@@ -299,7 +309,7 @@ $(document).ready(function(){
     });
 
     $('#close-button').click(function() {
-        $profile_update.dialog("destroy");
+        $profile_update.hide();
     });
 
     var form_ucid = $("<input>").attr({'type':'hidden', 'name':'ucid'}).val(logged_in_ucid);
@@ -308,7 +318,7 @@ $(document).ready(function(){
     $form_update_profile.submit(function(){
         postMultipartRequest($(this), function(response) {
             if (!response.error) {
-                window.location.href = 'profile.html'
+                window.location.reload(false);
             } else {
                 alert(response.message);
             }

@@ -7,11 +7,11 @@
 <script type="text/javascript" src="js/group.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 <script>
-   /* getSession(function(response) {
+    getSession(function(response) {
         if(response.error) {
             window.location.href = "login.html";
         }
-    });*/
+    });
 </script>
 <head>
     <meta charset="UTF-8">
@@ -80,7 +80,7 @@
                 <div class="search-name">
                     <div class="title">Search by name</div>
                     <br>
-                    <form id="form-search-group-name" action="../group/search.php" method="post" >
+                    <form id="form-search-group-name" action="search.html" method="get" >
                         <input type="text" placeholder="Name" name="group" class="input-box">
                         <br><input type="submit" value="Search">
                     </form>
@@ -93,7 +93,7 @@
                 <div class="search-interest">
                     <div class="title">Search by interest</div>
                     <br>
-                    <form id="form-search-group-interest" action="../group/search.php" method="post" >
+                    <form id="form-search-group-interest" action="search.html" method="get" >
                         <input class="interests-select">
                         <br><input type="submit" value="Search">
                     </form>
