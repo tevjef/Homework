@@ -2,14 +2,16 @@
 <html lang="en">
 <link rel="stylesheet" href="css/styles.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script type="text/javascript" src="js/review.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
 <script>
-    /*
-     If not logged, redirect to login page
-     getSession(function(response) {
-     if(response.error) {
-     window.location.href = "login.html";
-     }
-     });*/
+    getSession(function(response) {
+        if(response.error) {
+            window.location.href = "login.html";
+        }
+    });
 </script>
 <head>
     <meta charset="UTF-8">
@@ -38,7 +40,40 @@
     <div id="content">
         <div class="content-left">
             <div class="utility-box">
-                A box to the left
+                <div class="meta-info">
+                    <div class="item">
+                        <h3 class="name">Tevin Jeffrey</h3>
+                    </div>
+                    <div class="item">
+                        <h4><b>Average</b></h4>
+                        <p class="average"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="utility-box">
+                                <div class="search-class">
+                    <div class="title">Search by Class</div>
+                    <br>
+                    <form id="form-search-class" action="review.html" method="get" >
+                        <input class="class-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+            <div class="utility-box">
+                <div class="search-professor">
+                    <div class="title">Search by Professor</div>
+                    <br>
+                    <form id="form-search-professor" action="review.html" method="get" >
+                        <input class="professor-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
             </div>
         </div>
 
@@ -70,31 +105,14 @@
                 </div>
             </div>
             <div class="utility-box">
-                <div class="review">
-                    <div class="score">10</div>
-                    <div class="right">
-                        <div class="heading"><a href="#">Prof Theodore Nicholson</a></div>
-                        <div class="subheading"><a href="#">CS-490 Guided Design in Software Engineering</a></div>
-                    </div>
-                    <div class="modifiers">
-                        <p><a class="post-delete" href="#">Delete</a></p>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="review-content"><p>Lorem ipsum dolor sit amet,
-                        consectetur adipiscing elit. Nulla ornare cursus ante id
-                        tincidunt. Phasellus imperdiet lectus sed dui porta, et
-                        convallis tellus fringilla. Aenean id nulla massa. Quisque
-                        ultrices ante ac diam volutpat, vel cursus sapien eleifend.
-                        Vivamus pellentesque ullamcorper neque.</p> </div>
+                <div class="reviews">
+
                 </div>
             </div>
         </div>
 
         <div class="content-right">
-            <div class="utility-box">
-                A box to the right
 
-            </div>
 
         </div>
     </div>

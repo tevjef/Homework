@@ -145,7 +145,7 @@ $(document).ready(function(){
             $("#" + postId + " .post-body p").text(postData.postText);
 
             // Delete post
-            var $delete_post = $("#" + postId + " .post-delete");
+            var $delete_post = $("#" + postId + " .delete");
             $delete_post.click(function(){
                 var bool = confirm("Are you sure");
                 if (bool == true) {

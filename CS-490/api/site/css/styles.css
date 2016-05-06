@@ -170,6 +170,7 @@ ul#menu li a {
     font-size: 40px;
     color: #757575;
     font-weight: bold;
+    width: 40px;
     float: left;
 }
 
@@ -190,6 +191,7 @@ ul#menu li a {
 }
 
 .review {
+    margin-bottom: 5%;
     position: relative;
 }
 
