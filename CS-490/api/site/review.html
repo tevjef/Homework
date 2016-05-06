@@ -3,17 +3,17 @@
 <link rel="stylesheet" href="css/styles.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 <script>
-   /*
-    If not logged, redirect to login page
-   getSession(function(response) {
-        if(response.error) {
-            window.location.href = "login.html";
-        }
-    });*/
+    /*
+     If not logged, redirect to login page
+     getSession(function(response) {
+     if(response.error) {
+     window.location.href = "login.html";
+     }
+     });*/
 </script>
 <head>
     <meta charset="UTF-8">
-    <title>Group</title>
+    <title>Review</title>
 </head>
 <body>
 
@@ -38,14 +38,55 @@
     <div id="content">
         <div class="content-left">
             <div class="utility-box">
-              A box to the left
+                A box to the left
             </div>
         </div>
 
         <div class="content-middle">
             <div class="utility-box">
-                A box in the middle
+                <div class="create-review">
+                    <h3>Create a review</h3>
+                    <form id="form-create-review" action="../profile/create.php" method="post">
+                        <label>Professor </label><br><input class="professor-select" placeholder=""><br>
+                        <label>Class </label><br><input class="class-select" placeholder=""><br>
+                        <label>Rating (1-10) </label><br>
+                        <select name="rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select><br>
+                        <textarea class="textarea" name="text" placeholder="Your review" rows="5" cols="30"></textarea><br>
 
+
+                        <input type="submit" value="Submit"><br><br>
+                    </form>
+                </div>
+            </div>
+            <div class="utility-box">
+                <div class="review">
+                    <div class="score">10</div>
+                    <div class="right">
+                        <div class="heading"><a href="#">Prof Theodore Nicholson</a></div>
+                        <div class="subheading"><a href="#">CS-490 Guided Design in Software Engineering</a></div>
+                    </div>
+                    <div class="modifiers">
+                        <p><a class="post-delete" href="#">Delete</a></p>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="review-content"><p>Lorem ipsum dolor sit amet,
+                        consectetur adipiscing elit. Nulla ornare cursus ante id
+                        tincidunt. Phasellus imperdiet lectus sed dui porta, et
+                        convallis tellus fringilla. Aenean id nulla massa. Quisque
+                        ultrices ante ac diam volutpat, vel cursus sapien eleifend.
+                        Vivamus pellentesque ullamcorper neque.</p> </div>
+                </div>
             </div>
         </div>
 

@@ -261,14 +261,14 @@ $(document).ready(function(){
     }
 
     function MakeReviewListing(review) {
-        var $listing = $('<div class="review-listing"></div>');
+        var $listing = $('<div class="review"></div>');
 
-        var $rating = $('<div class="score">'+review.rating+'</div>');
+        var $rating = $('<div style="margin-right: 8px" class="score">'+review.rating+'</div>');
 
-        var $professor = $('<div class="professor"><a href="review.html?professor='+review.professor_id+'">'+review.name+'</a></div>');
-        var $class = $('<div class="class"><a href="review.html?class='+review.class_id+'">'+review.class+'</a></div>');
+        var $professor = $('<div class="heading"><a href="review.html?professor='+review.professor_id+'">'+review.name+'</a></div>');
+        var $class = $('<div class="subheading"><a href="review.html?class='+review.class_id+'">'+review.class+'</a></div>');
 
-        var $reviewText = $('<p>'+review.review+'</p>');
+        var $reviewText = $('<p class="review-content">'+review.review+'</p>');
 
         $listing.append($rating);
         $listing.append($professor);

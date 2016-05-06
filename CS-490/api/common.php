@@ -432,7 +432,12 @@ function selectUserOptions($ucid, $options = []) {
         $profileId = $result['search_profileID'];
         $email = $result['email'];
 
-        $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email];
+        $json = ['ucid' => $ucid,
+            'username' => $username,
+            'email' => $email,
+            'admin' => isAdmin($ucid),
+
+        ];
         if (isset($options['profile'])?$options['profile']:false) {
             $json['profile'] = selectProfile($profileId);
         }

@@ -48,7 +48,7 @@ $(document).ready(function() {
                 return false;
             });
             $form.find(".interests-select").autocomplete({
-                source: "../../interests.php",
+                source: "../interests.php",
                 minLength: 2,
                 // When option is selected
                 select: onSelectInterest($form)
@@ -125,7 +125,7 @@ $(document).ready(function() {
 
             for (var j in group.posts) {
                 console.log(group.posts[j]);
-                MakePost(group.posts[j])
+                MakePost(group, group.posts[j])
             }
 
             if (group.posts == 0) {
@@ -134,7 +134,7 @@ $(document).ready(function() {
         });
     }
 
-    function MakePost(postData) {
+    function MakePost(group, postData) {
         var postId ='post-' + postData.id;
         var postDiv = '<div id="' + postId + '"></div>';
         var $post = $(postDiv).load("elements/post.html", function (content, status, xhr) {
@@ -160,7 +160,7 @@ $(document).ready(function() {
                 $delete_post.hide();
             }
 
-            if (account.ucid == logged_in_ucid || isAdmin) {
+            if (group.ownerUcid == logged_in_ucid || isAdmin) {
                 $delete_post.show();
             }
 
