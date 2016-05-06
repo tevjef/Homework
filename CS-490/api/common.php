@@ -108,7 +108,7 @@ function selectProfessorReviews($professor_id) {
     $result = postToDatabase($fields);
 
     $name = selectProfessorName($professor_id);
-    if (count($result['message']['data']) == 0) {
+    if (count($result['data']) == 0) {
         die(encode_json(['message' => "This professor does not exist.", 'error' => true]));
     } else {
         $average = $result['globalaverage']['grade'];
@@ -188,7 +188,7 @@ function selectStudentReviews($profile_id) {
         array_push($arr, [
             'id' => $value['reviewID'],
             'professor_id' => $value['search_professorID'],
-            'name' => $value['professorName'],
+            'professor_name' => $value['professorName'],
             'class' => $value['className'],
             'class_id' => $value['classID'],
             'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])) ,
