@@ -33,6 +33,8 @@ $(document).ready(function(){
                 window.location.href = 'profile.html'
             } else {
                 $('.result').text(response.message);
+                validation_failed = false;
+
             }
         });
         return false;

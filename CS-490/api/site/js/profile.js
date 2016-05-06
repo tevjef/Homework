@@ -248,6 +248,9 @@ $(document).ready(function(){
 
     function MakePeopleListing(person) {
         var $listing = $('<div class="generic-listing"></div>');
+        if (person.image == null) {
+            person.image = "http://i.imgur.com/cIiHMjg.png";
+        }
         $listing.append('<a href=profile.html?id='+person.ucid+'> <img src="'+person.image+'"></a>');
 
         var $right = $('<div class="right"></div>');
