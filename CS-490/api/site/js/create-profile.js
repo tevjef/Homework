@@ -39,7 +39,7 @@ $(document).ready(function(){
     });
 
     $form_create_profile.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_create_profile)

@@ -82,6 +82,25 @@ function onSelectSingleInterest($form) {
     }
 }
 
+function onSelectProfessorId($form) {
+    return function( event, ui ) {
+        // Create a shadow input field that will be transferred to the server.
+        var input = $("<input>").attr({'type':'hidden', 'name':'professor_id'}).val(ui.item.professor_id);
+        // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
+        $form.append($(input));
+        return false;
+    }
+}
+
+function onSelectClassId($form) {
+    return function( event, ui ) {
+        // Create a shadow input field that will be transferred to the server.
+        var input = $("<input>").attr({'type':'hidden', 'name':'class_id'}).val(ui.item.class_id);
+        // Add it to the form to be submitted. Problem, there's no way to remove a selection once selected.
+        $form.append($(input));
+        return false;
+    }
+}
 
 
 function onSelectProfessor($form) {

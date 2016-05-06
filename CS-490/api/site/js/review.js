@@ -207,6 +207,39 @@ $(document).ready(function() {
         $(".reviews").append($review);
     }
 
+    var $form_create_review = $('#form-create-review');
+    var $from = $("<input>").attr({'type':'hidden', 'name':'ucid'}).val(logged_in_ucid);
+    $form_create_review.append($from);
+    $form_create_review.submit(function() {
+        var $this = $(this);
+        postRequest($(this), function(response) {
+            if (!response.error) {
+                window.location.href = 'review.html'
+            } else {
+                $('.result').text(response.message);
+            }
+        });
+        return false;
+    });
+
+
+    $form_create_review.find(".class-select").autocomplete({
+        source: "../classes.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectClassId($form_create_review)
+    });
+
+    $form_create_review.find(".professor-select").autocomplete({
+        source: "../professors.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectProfessorId($form_create_review)
+    });
+
+
+
+
     var $form_search_class = $('#form-search-class');
     $form_search_class.find(".class-select").autocomplete({
         source: "../classes.php",
@@ -268,6 +301,24 @@ function GetClassReviews(id, callback) {
 function GetProfessorReviews(id, callback) {
     var params = {
         professor_id:id};
+
+    callback(JSON.parse($.ajax({
+        type: "POST",
+        url: '../review/index.php',
+        data: $.param(params),
+        async: false
+    }).responseText));
+}
+
+
+function CreateReview(ucid, classId, professorId, rating, text, callback) {
+    var params = {
+        ucid:ucid,
+        class_id:classId,
+        professor_id:professorId,
+        rating:rating,
+        text:text
+    };
 
     callback(JSON.parse($.ajax({
         type: "POST",
