@@ -4,6 +4,7 @@ include_once '../common.php';
 
 $group_id = isset($_POST["group_id"])? $_POST["group_id"]:'';
 $group_name = isset($_POST["group_name"])? $_POST["group_name"]:'';
+$owner_id = isset($_POST["owner_id"])? $_POST["owner_id"]:'';
 $interests = isset($_POST["interests"])? $_POST["interests"]:[];
 
 if (empty($group_id)) {
@@ -11,17 +12,14 @@ if (empty($group_id)) {
     die(encode_json(['message' => "Bad Request - Must provide group_id when updating a group.", 'error' => true]));
 }
 
-if (empty($group_name)) {
-    http_response_code(400);
-    die(encode_json(['message' => "Bad Request - Must provide values for at least one field when updating a profile.", 'error' => true]));
-}
+$profile_id = getProfileId($owner_id);
 
-$result = updateGroup($group_id, $group_name, $interests);
-if (is_null($result)) {
+$result = updateGroup($group_id, $group_name, $profile_id, $interests);
+if (!$result) {
     http_response_code(400);
-    die(encode_json(['message' => "There was an error updating profile. Is the UCID registered?", 'error' => true]));
+    die(encode_json(['message' => "There was an error updating group. Is the UCID registered?", 'error' => true]));
 } else {
     http_response_code(200);
-    die(encode_json(['account' => $result, 'error' => false]));
+    die(encode_json(['group' => selectGroup($group_id), 'error' => false]));
 
 }

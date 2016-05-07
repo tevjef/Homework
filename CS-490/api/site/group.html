@@ -3,62 +3,142 @@
 <link rel="stylesheet" href="css/styles.css">
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <script type="text/javascript" src="js/group.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
-
+<script>
+    getSession(function(response) {
+        if(response.error) {
+            window.location.href = "login.html";
+        }
+    });
+</script>
 <head>
     <meta charset="UTF-8">
     <title>Group</title>
 </head>
 <body>
-<div id="posts-wrapper">
-    <h2 class="group-name">Group Name</h2>
-    <h6 class="group-interests">Cartooning</h6>
 
-    <div class="post-create">
-        <textarea class="post-input" name="text" placeholder="text"></textarea><br>
-        <input type="submit" value="Submit">
-    </div>
+<main>
+    <nav>
+        <div class="container">
+            <div class="left">
+                <div id="logo">NJIT SOCIAL</div>
+                <ul id="menu">
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a style=" color: #ec2327;" href="group.html">Groups</a></li>
+                    <li><a href="review.html">Reviews</a></li>
+                </ul>
+            </div>
+            <div class="right">
+                <span class="logged-in-as">Logged in as <b>tj76</b></span>
+                <p><a href="logout.html">Logout</a></p>
 
-        <div class="post">
-            <div class="post-header">
-                <img src="https://scontent.xx.fbcdn.net/v/t1.0-1/p160x160/1909750_1152170264802257_8674978670096880472_n.jpg?oh=1102ae0ee8d975b0f6bb125926cf3976&oe=57A82AF9" >
-                <div class="right">
-                    <span><a class="profile-link" href="group.html">Tevin Jeffrey</a></span><br>
-                    <span> July 4, 2006</span>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="post-body">
-                <p>This is the post body</p>
             </div>
         </div>
-        <div class="post">
-            <div class="post-header">
-                <img src="https://scontent.xx.fbcdn.net/v/t1.0-1/p160x160/1909750_1152170264802257_8674978670096880472_n.jpg?oh=1102ae0ee8d975b0f6bb125926cf3976&oe=57A82AF9" >
-                <div class="right">
-                    <span><a class="profile-link" href="group.html">Tevin Jeffrey</a></span><br>
-                    <span> July 4, 2006</span>
+    </nav>
+    <div id="content">
+        <div class="content-left">
+            <div class="utility-box">
+                <div class="meta-info">
+                    <div class="item">
+                        <h3 class="name">PHP support group with a very long name</h3>
+                    </div>
+
+                    <div class="item">
+                        <h4><b>Owner</b></h4>
+                        <p class="owner-name"></p>
+
+                    </div>
+
+                    <div class="item">
+                        <h4><b>Focus</b></h4>
+                        <p class="interests"></p>
+                    </div>
+
+                    <div class="item" style="margin: 0 auto">
+                        <button id="meta-edit" type="button">Edit Group</button><br><br>
+                        <p><a id="meta-delete" href="#">Delete Group</a>
+                    </div>
+                    <div style="display: none;" id="meta-update">
+                        <div class="update-group">
+                            <h3>Update your group</h3>
+                            <form id="form-update-group" action="../group/update.php" method="post"><br>
+                                <label>Group Name</label><br><input type="text" name="group_name" class="input-box"><br>
+                                <label>Change owner UCID</label><br><input type="text" name="owner_id" class="input-box"><br>
+                                <p class="result" style="color: red"></p>
+                                <br>
+                                <button id="close-button">Close</button>
+                                <input type="submit" value="Submit">
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="clearfix"></div>
-            <div class="post-body">
-                <p>This is the post body</p>
+
+            <div class="utility-box">
+                <div class="search-name">
+                    <div class="title">Search by name</div>
+                    <br>
+                    <form id="form-search-group-name" action="search.html" method="get" >
+                        <input type="text" placeholder="Name" name="group" class="input-box">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+            <div class="utility-box">
+                <div class="search-interest">
+                    <div class="title">Search by interest</div>
+                    <br>
+                    <form id="form-search-group-interest" action="search.html" method="get" >
+                        <input class="interests-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
             </div>
         </div>
-        <div class="post">
-            <div class="post-header">
-                <img src="https://scontent.xx.fbcdn.net/v/t1.0-1/p160x160/1909750_1152170264802257_8674978670096880472_n.jpg?oh=1102ae0ee8d975b0f6bb125926cf3976&oe=57A82AF9" >
-                <div class="right">
-                    <span><a class="profile-link" href="group.html">Tevin Jeffrey</a></span><br>
-                    <span> July 4, 2006</span>
+
+        <div class="content-middle">
+            <div class="utility-box">
+                <div class="make-post">
+                    <form id="form-create-post" action="../group/post/create.php" method="post">
+                        <textarea class="post-input" name="text" placeholder="Make a post!"></textarea><br>
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="posts">
+                <div class="utility-box">
                 </div>
             </div>
-            <div class="clearfix"></div>
-            <div class="post-body">
-                <p>This is the post body</p>
+        </div>
+
+        <div class="content-right">
+            <div class="utility-box">
+                <div class="your-groups">
+                    <div class="title">Your Groups</div>
+                    <div class="listing">
+
+                    </div>
+                </div>
+            </div>
+            <div class="utility-box">
+                <div class="your-recommend-groups">
+                    <div class="title">Groups You May Like</div>
+                    <div class="listing">
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    </div>
+</main>
 </body>
 </html>

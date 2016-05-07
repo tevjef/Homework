@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="css/styles.css">
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script type="text/javascript" src="js/review.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script>
+    getSession(function(response) {
+        if(response.error) {
+            window.location.href = "login.html";
+        }
+    });
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>Review</title>
+</head>
+<body>
+
+<main>
+    <nav>
+        <div class="container">
+            <div class="left">
+                <div id="logo">NJIT SOCIAL</div>
+                <ul id="menu">
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="group.html">Groups</a></li>
+                    <li><a style=" color: #ec2327;" href="review.html">Reviews</a></li>
+                </ul>
+            </div>
+            <div class="right">
+                <span class="logged-in-as">Logged in as <b>tj76</b></span>
+                <p><a href="logout.html">Logout</a></p>
+
+            </div>
+        </div>
+    </nav>
+    <div id="content">
+        <div class="content-left">
+            <div class="utility-box">
+                <div class="meta-info">
+                    <div class="item">
+                        <h3 class="name">Tevin Jeffrey</h3>
+                    </div>
+                    <div class="item">
+                        <h4><b>Average</b></h4>
+                        <p class="average"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="utility-box">
+                                <div class="search-class">
+                    <div class="title">Search by Class</div>
+                    <br>
+                    <form id="form-search-class" action="review.html" method="get" >
+                        <input class="class-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+
+            <div class="utility-box">
+                <div class="search-professor">
+                    <div class="title">Search by Professor</div>
+                    <br>
+                    <form id="form-search-professor" action="review.html" method="get" >
+                        <input class="professor-select">
+                        <br><input type="submit" value="Search">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+
+            </div>
+        </div>
+
+        <div class="content-middle">
+            <div class="utility-box">
+                <div class="create-review">
+                    <h3>Create a review</h3>
+                    <form id="form-create-review" action="../review/create.php" method="post">
+                        <label>Professor </label><br><input style="width: 100%" class="professor-select" placeholder=""><br>
+                        <label>Class </label><br><input style="width: 100%"  class="class-select" placeholder=""><br>
+                        <label>Rating (1-10) </label><br>
+                        <select name="rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select><br>
+                        <textarea class="textarea" name="text" placeholder="Your review" rows="5" cols="30"></textarea><br>
+
+
+                        <input type="submit" value="Submit"><br><br>
+                    </form>
+                </div>
+            </div>
+            <div class="utility-box">
+                <div class="reviews">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="content-right">
+
+
+        </div>
+    </div>
+    </div>
+</main>
+</body>
+</html>

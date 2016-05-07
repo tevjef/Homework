@@ -20,6 +20,7 @@ if (empty($ucid) || empty($privileged_user)) {
     die(encode_json(['message' => "Bad Request - Must provide the ucid and signed_in_ucid when retrieving an account", 'error' => true]));
 }
 
+$is_owner = true;
 if (strcmp($ucid, $privileged_user) == 0) {
     if (isAdmin($ucid)) {
         $is_owner = true;
@@ -28,7 +29,7 @@ if (strcmp($ucid, $privileged_user) == 0) {
 
 $result = selectUserOptions($ucid, ['profile' => $get_profile, 'posts' => $get_posts,
     'interests' => $get_interests, 'groups_own' => $get_groups_own, 'reviews' => ($get_reviews && $is_owner),
-    'recommend_people' => true]);
+    'recommend_people' => $get_recommended_people, 'recommend_groups' => $get_recommended_groups]);
 
 if (is_null($result)) {
     http_response_code(400);

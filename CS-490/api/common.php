@@ -27,52 +27,61 @@ function postRequest($url, $headers, $fields) {
 }
 
 
-function getRecommendedPeople($ucid) {
-    $profileId = getProfileId($ucid);
-    $interests = selectUserOptions($ucid, ['interests' => true])['profile']['interests'];
+function getRecommendedPeople($profileId) {
+    $ids = selectSimilarPeople($profileId);
 
-    $ids = [];
-    $reasons = [];
-    foreach ($interests as $item) {
-       array_push($reasons, $item['name']);
-        $sim = selectSimilarPeople($profileId, $item['id']);
-        $ids = array_merge($ids, $sim);
-    }
-    $ids = array_unique($ids);
-    $ids = array_filter($ids, function ($var) use ($profileId) { return ($var != $profileId); });
-
-    $profiles = [];
-    foreach ($ids as $id) {
-        $thisUcid = getUcid($id);
-        if (!is_null($thisUcid)) {
-            array_push($profiles, selectUserOptions($thisUcid, []));
-        }
-    }
-    return ["reason" => $reasons, 'people' => $profiles];
+    return $ids;
 }
 
-function selectSimilarPeople($profile_id, $interest_id){
-    $fields = "opcode=0&sql=SELECT profileID FROM profiles JOIN profileIntrests ON
-  profiles.profileID = profileIntrests.search_profileID
-  JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
- WHERE intrestID = $interest_id AND profileID <> $profile_id LIMIT 5";
+function selectSimilarPeople($profile_id){
+    $fields = "opcode=0&sql=SELECT firstname, lastname, profilePicPath, profileID, intrestName, ucid, email, username FROM profiles JOIN profileIntrests
+    ON profiles.profileID = profileIntrests.search_profileID JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
+    JOIN passwords ON passwords.search_profileID = profiles.profileID WHERE intrestID IN (
+SELECT intrestID FROM profiles JOIN profileIntrests ON profiles.profileID = profileIntrests.search_profileID JOIN intrests
+ON intrests.intrestID = profileIntrests.search_intrestID JOIN passwords ON passwords.search_profileID = profiles.profileID
+WHERE profiles.profileID = $profile_id) AND profiles.profileID <> $profile_id";
+
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, $value['profileID']);
+        array_push($arr, ['id' => $value['profileID'],
+            'ucid' =>  $value['ucid'],
+            'first_name' =>  $value['firstname'],
+            'last_name' =>  $value['lastname'],
+            'username' =>  $value['username'],
+            'email' =>  $value['email'],
+            'image' =>  $value['profilePicPath'],
+            'reason' =>  $value['intrestName']
+        ]);
     }
     return $arr;
 }
 
-function selectSimilarGroups($group_id, $interest_id){
-    $fields = "opcode=0&sql=SELECT groupID, groupName, intrestName FROM groups
+function getRecommendedGroups($profileId) {
+    $ids = selectSimilarGroups($profileId);
+    return $ids;
+}
+
+
+function selectSimilarGroups($profile_id){
+    $fields = "opcode=0&sql=SELECT groupID, groupName, intrestName, search_ownerprofileID, ucid FROM groups
     JOIN groupsIntrests ON groups.groupID = groupsIntrests.search_groupID
     JOIN intrests ON intrests.intrestID = groupsIntrests.search_intrestID
-    WHERE intrestID = $interest_id; LIMIT 5";
+    JOIN passwords ON search_ownerProfileID = passwords.search_profileID
+    WHERE intrestID IN (
+    SELECT intrestID FROM profiles JOIN profileIntrests ON profiles.profileID = profileIntrests.search_profileID
+    JOIN intrests ON intrests.intrestID = profileIntrests.search_intrestID
+    JOIN passwords ON passwords.search_profileID = profiles.profileID WHERE profiles.profileID = $profile_id)
+    AND search_ownerprofileID <> $profile_id";
+
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, [$value['groupID']]);
+        array_push($arr, ['id' => $value['groupID'],
+            'name' =>  $value['groupName'],
+            'ownerId' =>  $value['search_ownerprofileID'],
+            'ownerUcid' =>  $value['ucid'],
+            'reason' =>  $value['intrestName']]);
     }
     return $arr;
 }
@@ -81,6 +90,7 @@ function createReview($ucid, $class_id, $professor_id, $rating, $text) {
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
     $profileId = getProfileId($ucid);
+    $text = addslashes($text);
     $fields = "opcode=26&professorID=$professor_id&studentID=$profileId&classID=$class_id&timegiven=$timestamp&reviewgrade=$rating&reviewtext=$text";
     $result = postToDatabase($fields);
 
@@ -98,11 +108,11 @@ function selectProfessorReviews($professor_id) {
     $result = postToDatabase($fields);
 
     $name = selectProfessorName($professor_id);
-    if (count($result['message']['data']) == 0) {
+    if (count($result['data']) == 0) {
         die(encode_json(['message' => "This professor does not exist.", 'error' => true]));
     } else {
         $average = $result['globalaverage']['grade'];
-        $reviews = selectReviews($professor_id);
+        $reviews = selectReviewsByProfessor($professor_id);
         $review = ['id' => $professor_id, 'name' => $name, 'average' => $average, 'reviews' => $reviews];
         return $review;
     }
@@ -114,26 +124,76 @@ function removeReviews($review_id) {
     return ['result' => $result];
 }
 
-function selectReviews($professor_id) {
+function selectReviewsByProfessor($professor_id) {
     $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
     classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
     WHERE search_professorID=$professor_id ORDER BY timegiven DESC";
     $result = postToDatabase($fields);
+    date_default_timezone_set('UTC');
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['reviewID'], 'class' => $value['className'], 'time' => $value['Timegiven'], 'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText'], 'time' => $value['Timegiven'] ]);
+        array_push($arr, ['id' => $value['reviewID'],
+            'class_id' => $value['search_classID'],
+            'class' => $value['className'],
+            'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])),
+            'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText']]);
     }
     return $arr;
 }
 
-function selectStudentReviews($profile_id) {
+function getClassAverageReview($class_id) {
+    $fields = "opcode=0&sql=SELECT avg(reviewgrade) avg FROM reviews
+    JOIN classes ON classes.classID = reviews.search_classID
+    JOIN professors ON professorID = reviews.search_professorID
+    WHERE classes.classID=$class_id ORDER BY timegiven DESC";
+
+    $result = postToDatabase($fields);
+    return $result['data'][0]['avg'];
+}
+
+function selectReviewsByClass($class_id) {
+
+    $average = getClassAverageReview($class_id);
+
     $fields = "opcode=0&sql=SELECT reviews.*, classes.className, professorName FROM reviews JOIN classes ON
+    classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
+    WHERE classes.classID=$class_id ORDER BY timegiven DESC";
+    $result = postToDatabase($fields);
+    date_default_timezone_set('UTC');
+
+    $class_name ="";
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        $class_name = $value['className'];
+        array_push($arr, ['id' => $value['reviewID'],
+            'professor_id' => $value['search_professorID'],
+            'professor_name' => $value['professorName'],
+            'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])),
+            'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText']]);
+    }
+
+    $review = ['id' => $class_id, 'name' => $class_name, 'average' => $average, 'reviews' => $arr];
+
+    return $review;
+}
+
+function selectStudentReviews($profile_id) {
+    $fields = "opcode=0&sql=SELECT reviews.*, classes.className, classes.classID, professorName FROM reviews JOIN classes ON
     classes.classID = reviews.search_classID JOIN professors ON professorID = reviews.search_professorID
     WHERE search_studentprofileID=$profile_id ORDER BY timegiven DESC";
     $result = postToDatabase($fields);
     $arr = [];
+    date_default_timezone_set('UTC');
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['reviewID'], 'name' => $value['professorName'], 'class' => $value['className'], 'time' => $value['Timegiven'], 'rating' => $value['Reviewgrade'], 'review' => $value['ReviewText'], 'time' => $value['Timegiven'] ]);
+        array_push($arr, [
+            'id' => $value['reviewID'],
+            'professor_id' => $value['search_professorID'],
+            'professor_name' => $value['professorName'],
+            'class' => $value['className'],
+            'class_id' => $value['classID'],
+            'time' => date("F j, Y, g:i a", strtotime($value['Timegiven'])) ,
+            'rating' => $value['Reviewgrade'],
+            'review' => $value['ReviewText']]);
     }
     return $arr;
 }
@@ -148,15 +208,16 @@ function selectProfessorName($professor_id) {
 
 function createGroup($ucid, $groupName, $interests) {
     $profileId = getProfileId($ucid);
+    $groupName = addslashes($groupName);
     $fields = "opcode=18&groupName=$groupName&ownerID=$profileId";
     $result = postToDatabase($fields);
 
     $message = $result['message'];
     if (str_compare($message, 'Exists')) {
         die(encode_json(['message' => "There was an error creation group.  $groupName already exists", 'error' => true]));
-    } else if (strcmp($message, 'inserted')) {
+    } else if (str_compare($message, 'inserted group')) {
         $groupId = $result['groupID'];
-        if(updateGroup($groupId, $groupName, $profileId, $interests)) {
+        if(updateGroup($groupId, "", "", $interests)) {
             return selectUserOptions($ucid, ["groups_own" => true]);
         }
     }
@@ -165,30 +226,50 @@ function createGroup($ucid, $groupName, $interests) {
 
 function searchGroupsByName($keyword) {
     /*SELECT * FROM groups WHERE groupName LIKE '%%'*/
-    $fields = "opcode=0&sql=SELECT * FROM groups WHERE groupName LIKE '%$keyword%'";
+    $fields = "opcode=0&sql=SELECT * FROM groups
+     JOIN passwords on passwords.search_profileID = groups.search_ownerprofileID WHERE groupName LIKE '%$keyword%'";
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['groupID'], 'name' => $value['groupName']]);
+        array_push($arr, ['id' => $value['groupID'],
+            'name' => $value['groupName'],
+            'ownerId' => $value['search_ownerprofileID'],
+            'ownerUcid' => $value['ucid'],
+
+        ]);
     }
     return $arr;
 }
 
 function searchGroupsByInterest($interest_id) {
-    $fields = "opcode=0&sql=SELECT groups.* FROM groups JOIN groupsIntrests ON groupID = search_groupID JOIN
-    intrests ON intrestID = search_intrestID WHERE intrestID = $interest_id";
+    $fields = "opcode=0&sql=SELECT * FROM groups JOIN groupsIntrests ON groupID = search_groupID JOIN
+    intrests ON intrestID = search_intrestID
+    JOIN passwords on passwords.search_profileID = groups.search_ownerprofileID
+    WHERE intrestID = $interest_id";
     $result = postToDatabase($fields);
     $arr = [];
     foreach ($result['data'] as $value) {
-        array_push($arr, ['id' => $value['groupID'], 'name' => $value['groupName']]);
+        array_push($arr, ['id' => $value['groupID'],
+            'name' => $value['groupName'],
+            'ownerId' => $value['search_ownerprofileID'],
+            'ownerUcid' => $value['ucid'],
+
+        ]);
     }
     return $arr;
+}
+
+function deleteGroup($group_id) {
+    $fields = "opcode=22&groupID=$group_id";
+    $result = postToDatabase($fields);
+    return str_compare($result['message'], "Deleted");
 }
 
 function updateGroup($groupId, $groupName, $ownerID, $interests) {
     $fields = "opcode=21&groupID=$groupId";
 
     if (!empty($groupName)) {
+        $groupName = addslashes($groupName);
         $fields .= "&groupName=$groupName";
     }
     if (!empty($ownerID)) {
@@ -197,11 +278,7 @@ function updateGroup($groupId, $groupName, $ownerID, $interests) {
     $fields .= "&intrestsIDs=". json_encode($interests);
     $result = postToDatabase($fields);
 
-    if (str_compare($result['message'], 'updated')) {
-        return true;
-    } else {
-        die(encode_json(['message' => "There was an error creation group. Could not insert ids", 'error' => true]));
-    }
+    return str_compare($result['message'], 'updated');
 }
 
 function selectProfileGroups($profileId) {
@@ -209,7 +286,7 @@ function selectProfileGroups($profileId) {
     $result = postToDatabase($fields);
     $groups = [];
     foreach ($result['data'] as $value) {
-        array_push($groups, ["id" => $value['groupID'], "name" => $value['groupName']]);
+        array_push($groups, selectGroup($value['groupID'], ['interests' => true]));
     }
     return $groups;
 }
@@ -219,7 +296,7 @@ function selectGroup($groupId, $options = []) {
     $result = postToDatabase($fields);
 
     if (!isset($result['data']['search_ownerprofileID'])) {
-        die(encode_json(['message' => "The group does not exist", 'error' => true]));
+        return null;
     }
     $ownerUcid = getUcid($result['data']['search_ownerprofileID']);
 
@@ -246,6 +323,7 @@ function createGroupPost($group_id, $from_ucid,$postText) {
     $from_profileId = getProfileId($from_ucid);
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
+    $postText = addslashes($postText);
     $fields = "opcode=9&posterID=$from_profileId&groupID=$group_id&postText=$postText&timeStamp=$timestamp";
     $result = postToDatabase($fields);
     $message = $result['message'];
@@ -261,8 +339,9 @@ function selectGroupPosts($groupId) {
     $fields = "opcode=11&groupID={$groupId}";
     $result = postToDatabase($fields);
     $posts = [];
+    date_default_timezone_set('UTC');
     foreach ($result['data'] as $item) {
-        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
+        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' =>  date("F j, Y, g:i a", strtotime($item['timeStamp'])),
             'posted_by' => getCacheProfile($item['search_senderprofileID'])]);
     }
     return $posts;
@@ -280,6 +359,7 @@ function createProfilePost($to_ucid, $from_ucid, $postText) {
     $from_profileId = getProfileId($from_ucid);
     date_default_timezone_set('UTC');
     $timestamp = date('Y-m-d H:i:s',time()) ;
+    $postText = addslashes($postText);
     $fields = "opcode=9&posterID={$from_profileId}&profileID={$to_profileId}&postText={$postText}&timeStamp={$timestamp}";
     $result = postToDatabase($fields);
     $message = $result['message'];
@@ -302,7 +382,8 @@ function selectProfilePosts($profileId) {
     $result = postToDatabase($fields);
     $posts = [];
     foreach ($result['data'] as $item) {
-        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => $item['timeStamp'],
+        date_default_timezone_set('EST');
+        array_push($posts, ['id' => $item['postID'], 'postText' => $item['postText'], 'timeStamp' => date("F j, Y, g:i a", strtotime($item['timeStamp'])),
             'posted_by' => getCacheProfile($item['search_senderprofileID'])]);
     }
     return $posts;
@@ -351,7 +432,12 @@ function selectUserOptions($ucid, $options = []) {
         $profileId = $result['search_profileID'];
         $email = $result['email'];
 
-        $json = ['ucid' => $ucid, 'username' => $username, 'email' => $email];
+        $json = ['ucid' => $ucid,
+            'username' => $username,
+            'email' => $email,
+            'admin' => isAdmin($ucid),
+
+        ];
         if (isset($options['profile'])?$options['profile']:false) {
             $json['profile'] = selectProfile($profileId);
         }
@@ -368,7 +454,10 @@ function selectUserOptions($ucid, $options = []) {
             $json['reviews'] = selectStudentReviews($profileId);
         }
         if (isset($options['recommend_people'])?$options['recommend_people']:false) {
-            $json['profile']['recommend_people'] = getRecommendedPeople($ucid);
+            $json['profile']['recommend_people'] = getRecommendedPeople($profileId);
+        }
+        if (isset($options['recommend_groups'])?$options['recommend_groups']:false) {
+            $json['profile']['recommend_groups'] = getRecommendedGroups($profileId);
         }
         return $json;
     } else {
@@ -401,12 +490,71 @@ function getProfileId($ucid) {
 }
 
 function getUcid($profileId) {
-    $fields = "opcode=15&profileID={$profileId}";
+    $fields = "opcode=15&profileID=$profileId";
     $result = postToDatabase($fields);
     if (isset($result['ucid'])) {
         return $result['ucid'];
     }
     return null;
+}
+
+function searchUsersByInterest($interest_id) {
+    $fields = "opcode=0&sql=SELECT * FROM profiles JOIN profileIntrests
+    ON profileID = search_profileID JOIN intrests ON intrestID = search_intrestID
+    JOIN passwords ON passwords.search_profileID = profiles.profileID
+    WHERE intrestID = $interest_id";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['profile_id' => $value['profileID'],
+            'first_name' => $value['firstName'],
+            'last_name' => $value['lastName'],
+            'image' => $value['profilePicPath'],
+            'username' => $value['username'],
+            'ucid' => $value['ucid'],
+            'email' => $value['email'],
+        ]);
+    }
+    return $arr;
+}
+
+function searchUsersByName($name) {
+    $fields = "opcode=0&sql=SELECT * FROM profiles
+    LEFT JOIN passwords ON passwords.search_profileID = profiles.profileID
+    WHERE firstName LIKE '%$name%' OR lastName LIKE '%$name%'";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['profile_id' => $value['profileID'],
+            'first_name' => $value['firstName'],
+            'last_name' => $value['lastName'],
+            'image' => $value['profilePicPath'],
+            'username' => $value['username'],
+            'ucid' => $value['ucid'],
+            'email' => $value['email'],
+        ]);
+    }
+    return $arr;
+}
+
+function searchUsersByUcid($ucid) {
+    $fields = "opcode=0&sql=SELECT * FROM profiles JOIN profileIntrests
+    ON profileID = search_profileID JOIN intrests ON intrestID = search_intrestID
+    JOIN passwords ON passwords.search_profileID = profiles.profileID
+    WHERE ucid LIKE '%$ucid%'";
+    $result = postToDatabase($fields);
+    $arr = [];
+    foreach ($result['data'] as $value) {
+        array_push($arr, ['profile_id' => $value['profileID'],
+            'first_name' => $value['firstName'],
+            'last_name' => $value['lastName'],
+            'image' => $value['profilePicPath'],
+            'username' => $value['username'],
+            'ucid' => $value['ucid'],
+            'email' => $value['email'],
+        ]);
+    }
+    return $arr;
 }
 
 function updateUser($ucid, $username, $last, $first, $password, $profileId) {
@@ -442,10 +590,10 @@ function updateUser($ucid, $username, $last, $first, $password, $profileId) {
 
 function createProfile($ucid, $firstname, $lastname, $relationshipId, $classId, $genderId, $status, $image, $interests) {
     // Check if profile already exists
-/*    $result = selectUser($ucid);
-    if (!is_null($result['profile'])) {
-        return null;
-    }*/
+    /*    $result = selectUser($ucid);
+        if (!is_null($result['profile'])) {
+            return null;
+        }*/
     $profileId = initProfile($firstname, $lastname);
     $result = updateUser($ucid,"","","","",$profileId);
     if (is_null($result)) {
@@ -530,7 +678,7 @@ function updateProfile($ucid, $firstname, $lastname, $relationshipId, $classId, 
         insertInterest($profileId, $value);
     }
 
-    if (!empty($firstname) || !empty($lastname) || !empty($classId) || !empty($genderId) || !empty($relationshipId) || !empty($status)) {
+    if (!empty($firstname) || !empty($lastname) || !empty($classId) || !empty($genderId) || !empty($relationshipId) || !empty($status) || !empty($image)) {
         $result = postToDatabase($fields);
         $message = $result['message'];
         if (str_compare($message, 'updated')) {
@@ -559,6 +707,9 @@ function selectProfile($profileId) {
     $relationship = getRelationship($result['search_relationshipID']);
     $gender = getGender($result['search_genderID']);
 
+    if (is_null($result['profilePicPath'])) {
+        $result['profilePicPath'] = "http://i.imgur.com/cIiHMjg.png";
+    }
     $json = ['profile_id' => $profileId, 'first_name' => $result['firstName'],'last_name' => $result['lastName'],
         'class_level' => $grade, 'relationship' => $relationship, 'gender' => $gender, 'about' => $result['status'],
         'image' => $result['profilePicPath']];
@@ -569,6 +720,9 @@ function selectSmallProfile($profileId) {
     $fields = "opcode=6&profileID={$profileId}";
     $result = postToDatabase($fields);
     if (!isset($result['profileID'])) return null;
+    if (is_null($result['profilePicPath'])) {
+        $result['profilePicPath'] = "http://i.imgur.com/cIiHMjg.png";
+    }
     $json = ['profile_id' => $profileId, 'ucid' => getUcid($profileId), 'first_name' => $result['firstName'],'last_name' => $result['lastName'], 'image' => $result['profilePicPath']];
     return $json;
 }
@@ -595,7 +749,7 @@ function checkPassword($user, $pass){
 
 function postToDatabase($fields) {
     //var_dump($fields);
-    $result = postRequest('https://web.njit.edu/~maz9/DB/P3/', [], $fields);
+    $result = postRequest('https://web.njit.edu/~maz9/DB/P4/', [], $fields);
     //var_dump($result);
     return json_decode($result, true);
 }
@@ -722,7 +876,7 @@ function getUploaded() {
         }
 
         if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
-            return 'http://web.njit.edu/~tj76/api/profile/uploads/' . $file_name;
+            return 'https://web.njit.edu/~tj76/api/profile/uploads/' . $file_name;
         } else {
             return "";
         }

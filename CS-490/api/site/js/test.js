@@ -53,18 +53,24 @@ $(document).ready(function(){
     var $form_create_profile = $('#form-create-profile');
     var $form_update_profile = $('#form-update-profile');
     var $form_select_profile = $('#form-select-profile');
+    var $form_search_profile_interest = $('#form-search-profile-interest');
+    var $form_search_profile_name = $('#form-search-profile-name');
+    var $form_search_profile_ucid = $('#form-search-profile-ucid');
     var $form_create_post = $('#form-create-post');
+    var $form_remove_post = $('#form-remove-post');
 
     var $form_select_group = $('#form-select-group');
+    var $form_delete_group = $('#form-delete-group');
     var $form_search_group_name = $('#form-search-group-name');
     var $form_search_group_interest = $('#form-search-group-interest');
     var $form_list_group = $('#form-list-group');
-
     var $form_create_group = $('#form-create-group');
+    var $form_update_group = $('#form-update-group');
     var $form_create_group_post = $('#form-create-group-post');
 
     var $form_create_review = $('#form-create-review');
     var $form_select_review = $('#form-select-review');
+    var $form_select_class_review = $('#form-select-class-review');
     var $form_select_student_review = $('#form-select-student-review');
     var $form_delete_student_review = $('#form-delete-student-review');
 
@@ -74,72 +80,99 @@ $(document).ready(function(){
     $form_create_account_no_njit.submit(submitAction);
     $form_login_account.submit(submitAction);
     $form_delete_account.submit(submitAction);
+
     $form_create_profile.submit(submitMultipartAction);
     $form_update_profile.submit(submitMultipartAction);
     $form_select_profile.submit(submitAction);
+    $form_search_profile_interest.submit(submitAction);
+    $form_search_profile_name.submit(submitAction);
+    $form_search_profile_ucid.submit(submitAction);
     $form_create_post.submit(submitAction);
+    $form_remove_post.submit(submitAction);
 
     $form_select_group.submit(submitAction);
+    $form_delete_group.submit(submitAction);
     $form_search_group_name.submit(submitAction);
     $form_search_group_interest.submit(submitAction);
-
     $form_create_group.submit(submitAction);
+    $form_update_group.submit(submitAction);
     $form_create_group_post.submit(submitAction);
     $form_list_group.submit(submitAction);
 
     $form_create_review.submit(submitAction);
     $form_select_review.submit(submitAction);
-
+    $form_select_class_review.submit(submitAction);
     $form_select_student_review.submit(submitAction);
     $form_delete_student_review.submit(submitAction);
 
     $form_create_profile.find('.interests-select').autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_create_profile)
     });
 
     $form_update_profile.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_update_profile)
     });
 
+    $form_search_profile_interest.find(".interests-select").autocomplete({
+        source: "../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectSingleInterest($form_search_profile_interest)
+    });
+
     $form_create_group.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectInterest($form_create_group)
     });
 
+    $form_update_group.find(".interests-select").autocomplete({
+        source: "../interests.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectInterest($form_update_group)
+    });
+
     $form_search_group_interest.find(".interests-select").autocomplete({
-        source: "../../interests.php",
+        source: "../interests.php",
         minLength: 2,
         // When option is selected
         select: onSelectSingleInterest($form_search_group_interest)
     });
 
     $form_create_review.find(".class-select").autocomplete({
-        source: "../../classes.php",
+        source: "../classes.php",
         minLength: 2,
         // When option is selected
         select: onSelectClass($form_create_review)
     });
 
     $form_create_review.find(".professor-select").autocomplete({
-        source: "../../professors.php",
+        source: "../professors.php",
         minLength: 2,
         // When option is selected
         select: onSelectProfessor($form_create_review)
     });
 
     $form_select_review.find(".professor-select").autocomplete({
-        source: "../../professors.php",
+        source: "../professors.php",
         minLength: 2,
         // When option is selected
         select: onSelectProfessor($form_select_review)
+    });
+
+    $form_select_class_review.find(".class-select").autocomplete({
+        source: "../classes.php",
+        minLength: 2,
+        // When option is selected
+        select: onSelectClass($form_select_class_review)
     });
 
     function onSelectInterest($form) {

@@ -200,6 +200,7 @@
             <input type="checkbox" name="reviews" value="true" checked class="input-box">Get reviews made<br>
             <input type="checkbox" name="groups_own" value="true"  checked class="input-box">Get Groups Owned<br>
             <input type="checkbox" name="recommend_people" value="true"  checked class="input-box">Get Recommended People<br>
+            <input type="checkbox" name="recommend_groups" value="true"  checked class="input-box">Get Recommended Groups<br>
 
             <br><input type="submit" value="Submit">
         </div>
@@ -208,6 +209,38 @@
         </div>
     </form>
 
+    <form id="form-search-profile-interest" action="../profile/search.php" method="post" >
+        <div class="form">
+            <h3>Search profile by interest</h3>
+            <label>Interest </label>
+            <input class="interests-select" placeholder="interest"><br>
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-search-profile-name" action="../profile/search.php" method="post" >
+        <div class="form">
+            <h3>Search profile by name</h3>
+            <label>First or last name</label><input type="text" placeholder="name" name="name" class="input-box">
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+
+            <p>An empty search will list all</p>
+        </div>
+    </form>
+
+<!--    <form id="form-search-profile-ucid" action="../profile/search.php" method="post" >
+        <div class="form">
+            <h3>Search profile by ucid</h3>
+            <label>UCID: </label><input type="text" placeholder="ucid" name="ucid" class="input-box">
+            <br><input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>-->
 
     <form id="form-create-post" action="../profile/post/create.php" method="post" >
         <div class="form">
@@ -217,6 +250,16 @@
             <label> About </label>
             <textarea class="textarea" name="text" placeholder="text" rows="5" cols="30"></textarea><br>
 
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-remove-post" action="../profile/post/remove.php" method="post" >
+        <div class="form">
+            <h3>Remove a post</h3>
+            <label>Post ID</label><input type="text" placeholder="post_id" name="post_id" class="input-box"><br><br>
             <input type="submit" value="Submit">
         </div>
         <div class="right details">
@@ -239,11 +282,37 @@
         </div>
     </form>
 
+    <form id="form-update-group" action="../group/update.php" method="post" >
+        <div class="form">
+            <h3>Update a group</h3>
+            <label>Group ID: </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <label>New Owner Id: </label><input type="text" placeholder="owner_id" name="owner_id" class="input-box">
+            <label>Group Name: </label><input type="text" placeholder="group_name" name="group_name" class="input-box"><br><br>
+          <!--  <label>Interests: </label>
+            <input class="interests-select" placeholder="interests[]"><br>
+            <ul class="interest-list">
+            </ul>-->
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
     <form id="form-select-group" action="../group/index.php" method="post" >
         <div class="form">
             <h3>Select a group</h3>
             <label>Group ID </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
             <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-delete-group" action="../group/remove.php" method="post" >
+        <div class="form">
+            <h3>Remove a group</h3>
+            <label>Group Id </label><input type="text" placeholder="group_id" name="group_id" class="input-box">
+            <br><br><input type="submit" value="Submit">
         </div>
         <div class="right details">
         </div>
@@ -342,6 +411,17 @@
             <input class="professor-select" placeholder="professor_id"><br>
             <ul class="professor-list">
             </ul>
+
+            <input type="submit" value="Submit">
+        </div>
+        <div class="right details">
+        </div>
+    </form>
+
+    <form id="form-select-class-review" action="../review/index.php" method="post" >
+        <div class="form">
+            <h3>Select reviews by class</h3>
+            <input class="class-select" placeholder="class_id"><br>
 
             <input type="submit" value="Submit">
         </div>
