@@ -351,6 +351,9 @@ function isAdmin($ucid) {
     $profileId = getProfileId($ucid);
     $fields = "opcode=16&profileID=$profileId";
     $result = postToDatabase($fields);
+    var_dump($result);
+    var_dump($fields);
+
     return str_compare($result['message'], "is admin");
 }
 
